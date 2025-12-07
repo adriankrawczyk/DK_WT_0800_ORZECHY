@@ -27,4 +27,10 @@ public class DoctorService {
     public Doctor getDoctorById(int id) throws DoctorNotFoundException {
         return doctorRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
     }
+
+    public String deleteDoctorById(int id) throws DoctorNotFoundException {
+        Doctor doctor = doctorRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
+        doctorRepository.delete(doctor);
+        return "doctor has been deleted";
+    }
 }

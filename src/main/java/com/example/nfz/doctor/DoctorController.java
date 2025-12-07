@@ -1,13 +1,10 @@
 package com.example.nfz.doctor;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.xml.datatype.DatatypeConfigurationException;
+
 import java.util.List;
 
 @RestController
@@ -35,10 +32,19 @@ public class DoctorController {
             return new DetailedDoctorDTO(doctor.getId(),doctor.getFirstName(),doctor.getLastName(),
                     doctor.getSpecialization(),doctor.getAddress());
 
-        }catch(DoctorNotFoundException e){
+        }catch(DoctorNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteDoctor(@PathVariable String id) {
+        try{
+           return doctorService.deleteDoctorById(Integer.parseInt(id));
+        }catch(DoctorNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
 }
