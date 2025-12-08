@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.util.Objects;
+
 @Entity
 public class Doctor {
 
@@ -23,6 +25,18 @@ public class Doctor {
 
     public Doctor() {
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Doctor doctor = (Doctor) o;
+        return Objects.equals(firstName, doctor.firstName) && Objects.equals(lastName, doctor.lastName) && Objects.equals(PESEL, doctor.PESEL) && Objects.equals(specialization, doctor.specialization) && Objects.equals(street, doctor.street) && Objects.equals(city, doctor.city) && Objects.equals(zipCode, doctor.zipCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, PESEL, specialization, street, city, zipCode);
     }
 
     public Doctor(String firstName, String lastName, String PESEL, String specialization, String street, String city, String zipCode) {
