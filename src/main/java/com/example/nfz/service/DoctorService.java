@@ -1,5 +1,7 @@
 package com.example.nfz.service;
 
+import com.example.nfz.util.DetailedDoctorDTO;
+import com.example.nfz.util.DoctorDTO;
 import com.example.nfz.util.DoctorNotFoundException;
 import com.example.nfz.model.Doctor;
 import com.example.nfz.repository.DoctorRepository;
@@ -28,14 +30,25 @@ public class DoctorService {
         return doctorRepository.findAll();
     }
 
+
+    public List<DoctorDTO> getDoctorDTOs(){
+        return doctorRepository.findAll().stream()
+            .map(DoctorDTO::new)
+            .toList();
+    }
+
     public Doctor getDoctorById(int id) throws DoctorNotFoundException {
         return doctorRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
     }
 
-    public String deleteDoctorById(int id) throws DoctorNotFoundException {
+    public DetailedDoctorDTO getDetailedDoctorDTOById(int id) throws DoctorNotFoundException {
+        return new DetailedDoctorDTO(doctorRepository.findById(id)
+                .orElseThrow(DoctorNotFoundException::new));
+    }
+
+    public void deleteDoctorById(int id) throws DoctorNotFoundException {
         Doctor doctor = doctorRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
         doctorRepository.delete(doctor);
-        return "doctor has been deleted";
     }
 
     public Doctor saveDoctor(FormDoctorDTO doctor) {

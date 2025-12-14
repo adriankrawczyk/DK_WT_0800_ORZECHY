@@ -1,18 +1,22 @@
 package com.example.nfz.presentation;
 
-import com.example.nfz.util.DoctorNotFoundException;
-import com.example.nfz.util.DetailedDoctorDTO;
+import com.example.nfz.util.*;
 import com.example.nfz.model.Doctor;
-import com.example.nfz.util.DoctorDTO;
-import com.example.nfz.util.FormDoctorDTO;
 import com.example.nfz.service.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "doctors")
@@ -29,10 +33,18 @@ public class DoctorController {
             summary = "get all doctors in the database",
             description = "returns id, full name and specialization of each doctor in the database"
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content ={
+                        @Content(mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = DoctorDTO.class)
+                            )
+                        )
+                    })
+    })
     public List<DoctorDTO> getDoctors() {
-        return doctorService.getDoctors().stream()
-                .map(DoctorDTO::new)
-                .toList();
+        return doctorService.getDoctorDTOs();
 
     }
 
@@ -42,12 +54,18 @@ public class DoctorController {
             description = "returns id, full name, specialization and address of " +
                     "a specific doctor in the database based on the provided id"
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "doctor not found"),
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content ={
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = DetailedDoctorDTO.class)
+                            )
+                    })
+    })
     public DetailedDoctorDTO getDoctor(@PathVariable String id) {
         try{
-            Doctor doctor = doctorService.getDoctorById(Integer.parseInt(id));
-            return new DetailedDoctorDTO(doctor.getId(),doctor.getFirstName(),doctor.getLastName(),
-                    doctor.getSpecialization(),doctor.getAddress());
-
+            return doctorService.getDetailedDoctorDTOById(Integer.parseInt(id));
         }catch(DoctorNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -60,9 +78,22 @@ public class DoctorController {
             description = "deletes a specific doctor in the database based on the provided id " +
                     "on successful deletion, returns \"doctor has been deleted\""
     )
-    public String deleteDoctor(@PathVariable String id) {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "doctor not found"),
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content ={
+                        @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = InfoApiResponse.class)
+                        )
+                    }
+            )
+    })
+    public ResponseEntity<InfoApiResponse> deleteDoctor(@PathVariable String id) {
         try{
-           return doctorService.deleteDoctorById(Integer.parseInt(id));
+            doctorService.deleteDoctorById(Integer.parseInt(id));
+            return  ResponseEntity.ok(
+                    new InfoApiResponse("doctor has been deleted")
+            );
         }catch(DoctorNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -74,9 +105,19 @@ public class DoctorController {
             description = "deletes all doctor records in the database and " +
                     "fills it with a set list of doctors"
     )
-    public String initDoctorDataBase() {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content ={
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = InfoApiResponse.class)
+                            )
+                    }
+            )
+    })
+    public ResponseEntity<InfoApiResponse> initDoctorDataBase() {
         doctorService.initDataBase();
-        return "Successfully Initialized Doctor Data";
+        return ResponseEntity.ok(
+                new InfoApiResponse("doctor list has been initialized"));
     }
 
     @PostMapping("/add")
@@ -85,6 +126,15 @@ public class DoctorController {
             description = "creates and adds a doctor to the database, " +
                     "returns created Doctor class object"
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content ={
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Doctor.class)
+                            )
+                    }
+            )
+    })
     public Doctor addDoctor(@RequestBody FormDoctorDTO doctor) {
         return doctorService.saveDoctor(doctor);
     }
