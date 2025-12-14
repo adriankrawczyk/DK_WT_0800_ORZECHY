@@ -1,10 +1,8 @@
 package com.example.nfz.model;
 
 import com.example.nfz.util.Address;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 
@@ -19,9 +17,11 @@ public class Doctor {
     private String lastName;
     private String PESEL;
     private String specialization;
-    private String street;
-    private String city;
-    private String zipCode;
+//    private String street;
+//    private String city;
+//    private String zipCode;
+    @Embedded
+    private Address address;
 
     public Doctor() {
 
@@ -31,12 +31,12 @@ public class Doctor {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Doctor doctor = (Doctor) o;
-        return Objects.equals(firstName, doctor.firstName) && Objects.equals(lastName, doctor.lastName) && Objects.equals(PESEL, doctor.PESEL) && Objects.equals(specialization, doctor.specialization) && Objects.equals(street, doctor.street) && Objects.equals(city, doctor.city) && Objects.equals(zipCode, doctor.zipCode);
+        return Objects.equals(firstName, doctor.firstName) && Objects.equals(lastName, doctor.lastName) && Objects.equals(PESEL, doctor.PESEL) && Objects.equals(specialization, doctor.specialization) && Objects.equals(address, doctor.getAddress());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, PESEL, specialization, street, city, zipCode);
+        return Objects.hash(firstName, lastName, PESEL, specialization, address);
     }
 
     public Doctor(String firstName, String lastName, String PESEL, String specialization, String street, String city, String zipCode) {
@@ -44,25 +44,26 @@ public class Doctor {
         this.lastName = lastName;
         this.PESEL = PESEL;
         this.specialization = specialization;
-        this.street = street;
-        this.city = city;
-        this.zipCode = zipCode;
+        this.address = new Address(street, city, zipCode);
     }
 
     public String getLastName() {
         return lastName;
     }
 
+    @JsonIgnore
     public String getZipCode() {
-        return zipCode;
+        return address.zipCode();
     }
 
+    @JsonIgnore
     public String getCity() {
-        return city;
+        return address.city();
     }
 
+    @JsonIgnore
     public String getStreet() {
-        return street;
+        return address.street();
     }
 
     public String getSpecialization() {
@@ -81,6 +82,6 @@ public class Doctor {
         return firstName;
     }
     public Address getAddress() {
-        return new Address(street, city, zipCode);
+        return address;
     }
 }
