@@ -1,6 +1,10 @@
 package com.example.nfz;
 
-import com.example.nfz.doctor.*;
+import com.example.nfz.util.DoctorNotFoundException;
+import com.example.nfz.model.Doctor;
+import com.example.nfz.repository.DoctorRepository;
+import com.example.nfz.service.DoctorService;
+import com.example.nfz.util.FormDoctorDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

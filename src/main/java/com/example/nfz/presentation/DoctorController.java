@@ -1,5 +1,11 @@
-package com.example.nfz.doctor;
+package com.example.nfz.presentation;
 
+import com.example.nfz.util.DoctorNotFoundException;
+import com.example.nfz.util.DetailedDoctorDTO;
+import com.example.nfz.model.Doctor;
+import com.example.nfz.util.DoctorDTO;
+import com.example.nfz.util.FormDoctorDTO;
+import com.example.nfz.service.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.example.nfz.doctor;
+package com.example.nfz.model;
 
 import com.example.nfz.util.Address;
 import jakarta.persistence.Entity;

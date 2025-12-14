@@ -1,5 +1,9 @@
-package com.example.nfz.doctor;
+package com.example.nfz.service;
 
+import com.example.nfz.util.DoctorNotFoundException;
+import com.example.nfz.model.Doctor;
+import com.example.nfz.repository.DoctorRepository;
+import com.example.nfz.util.FormDoctorDTO;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
