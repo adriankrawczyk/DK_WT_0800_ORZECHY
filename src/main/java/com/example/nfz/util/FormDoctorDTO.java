@@ -7,6 +7,6 @@ public record FormDoctorDTO(String firstName, String lastName,
                             String city, String zipcode) {
     public FormDoctorDTO(Doctor doctor){
         this(doctor.getFirstName(), doctor.getLastName(), doctor.getPESEL(),
-                doctor.getSpecialization(), doctor.getStreet(), doctor.getCity(), doctor.getZipCode());
+                doctor.getSpecialization().getSpecializationName(), doctor.getStreet(), doctor.getCity(), doctor.getZipCode());
     }
 }

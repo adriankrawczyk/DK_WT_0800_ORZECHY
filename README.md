@@ -5,12 +5,13 @@
 1. [Uruchomienie aplikacji](#uruchomienie-aplikacji)
 2. [Interfejs użytkownika](#interfejs-użytkownika)
 3. [Funkcjonalności](#funkcjonalności)
-   - [Przeglądanie listy lekarzy](#1-przeglądanie-listy-lekarzy)
-   - [Dodawanie lekarza](#2-dodawanie-lekarza)
-   - [Wyświetlanie szczegółów lekarza](#3-wyświetlanie-szczegółów-lekarza)
-   - [Usuwanie lekarza](#4-usuwanie-lekarza)
-   - [Inicjalizacja bazy danych](#5-inicjalizacja-bazy-danych)
-   - [Odświeżanie listy](#6-odświeżanie-listy)
+    - [Przeglądanie listy lekarzy](#1-przeglądanie-listy-lekarzy)
+    - [Dodawanie lekarza](#2-dodawanie-lekarza)
+    - [Wyświetlanie szczegółów lekarza](#3-wyświetlanie-szczegółów-lekarza)
+    - [Usuwanie lekarza](#4-usuwanie-lekarza)
+    - [Inicjalizacja bazy danych](#5-inicjalizacja-bazy-danych)
+    - [Odświeżanie listy](#6-odświeżanie-listy)
+4. [Diagramy UML](#diagramy-uml)
 
 ---
 
@@ -169,6 +170,12 @@ Po uruchomieniu aplikacji zobaczysz stronę główną z:
 1. **Kliknij przycisk** `Odśwież Listę` znajdujący się na górze strony
 
 2. **Rezultat:** Lista lekarzy zostanie ponownie pobrana z serwera i wyświetlona
+
+---
+
+## Diagramy UML
+
+![domena Doktor](nfz_uml.drawio.png)
 
 ---
 

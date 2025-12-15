@@ -137,9 +137,14 @@ public class DoctorController {
                                     schema = @Schema(implementation = Doctor.class)
                             )
                     }
-            )
+            ),
+            @ApiResponse(responseCode = "404", description = "specialization not found"),
     })
     public Doctor addDoctor(@RequestBody FormDoctorDTO doctor) {
-        return doctorService.saveDoctor(doctor);
+        try {
+            return doctorService.saveDoctor(doctor);
+        } catch (SpecializationNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 }
