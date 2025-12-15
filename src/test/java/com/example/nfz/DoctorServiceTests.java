@@ -1,5 +1,6 @@
 package com.example.nfz;
 
+import com.example.nfz.service.TestService;
 import com.example.nfz.util.DoctorNotFoundException;
 import com.example.nfz.model.Doctor;
 import com.example.nfz.repository.DoctorRepository;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 
 import java.util.List;
 
@@ -21,6 +23,9 @@ public class DoctorServiceTests {
 
     @Autowired
     private DoctorService doctorService;
+
+    @Autowired
+    private TestService testService;
 
     @Autowired
     private DoctorRepository doctorRepository;
@@ -140,7 +145,7 @@ public class DoctorServiceTests {
         Doctor doctor7 = new Doctor("Lisa","Cudy","8280173827",
                 "Urologia","Niezapominajkowa 45","Kraków","05-345");
 
-        doctorService.initDataBase();
+        testService.initDataBase();
 
         List<Doctor> doctors = doctorService.getDoctors();
         Assertions.assertNotNull(doctors);

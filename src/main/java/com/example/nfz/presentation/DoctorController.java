@@ -1,5 +1,7 @@
 package com.example.nfz.presentation;
 
+import com.example.nfz.repository.DoctorRepository;
+import com.example.nfz.service.TestService;
 import com.example.nfz.util.*;
 import com.example.nfz.model.Doctor;
 import com.example.nfz.service.DoctorService;
@@ -23,9 +25,11 @@ import java.util.Map;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final TestService  testService;
 
-    public DoctorController(DoctorService doctorService) {
+    public DoctorController(DoctorService doctorService, TestService testService) {
         this.doctorService = doctorService;
+        this.testService = testService;
     }
 
     @GetMapping
@@ -115,7 +119,7 @@ public class DoctorController {
             )
     })
     public ResponseEntity<InfoApiResponse> initDoctorDataBase() {
-        doctorService.initDataBase();
+        testService.initDataBase();
         return ResponseEntity.ok(
                 new InfoApiResponse("doctor list has been initialized"));
     }
