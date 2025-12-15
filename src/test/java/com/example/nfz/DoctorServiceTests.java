@@ -1,5 +1,6 @@
 package com.example.nfz;
 
+import com.example.nfz.model.Specialization;
 import com.example.nfz.service.TestService;
 import com.example.nfz.util.DoctorNotFoundException;
 import com.example.nfz.model.Doctor;
@@ -42,7 +43,7 @@ public class DoctorServiceTests {
     private TestService testService;
 
 
-    Doctor testDoctor = new Doctor("Ted","Bundy","1234567890","Patologia","Sezamkowa",
+    Doctor testDoctor = new Doctor("Ted","Bundy","1234567890",Specialization.CARDIOLOGY,"Sezamkowa",
             "Ameryka","12-345");
 
 
@@ -59,9 +60,14 @@ public class DoctorServiceTests {
 
         when(doctorRepository.save(any(Doctor.class))).thenReturn(testDoctor);
 
-        Doctor savedDoctor = doctorService.saveDoctor(testDoctorForm);
+        try {
+            Doctor savedDoctor = doctorService.saveDoctor(testDoctorForm);
+            Assertions.assertEquals(testDoctor,savedDoctor);
+        }catch (Exception e){
+            Assertions.fail();
+        }
 
-        Assertions.assertEquals(testDoctor,savedDoctor);
+
 
 //        Assertions.assertEquals(1,doctorRepository.count());
     }
@@ -90,7 +96,7 @@ public class DoctorServiceTests {
 
     @Test
     public void getDoctorsTest() {
-        Doctor testDoctor2 = new Doctor("Robute","Guilliman","400000000","Psychiatria",
+        Doctor testDoctor2 = new Doctor("Robute","Guilliman","400000000", Specialization.NEUROLOGY,
                 "Ultramarynowa 13", "Poznań", "42-000");
 
 //        FormDoctorDTO testDoctorForm2 = new FormDoctorDTO(testDoctor2);

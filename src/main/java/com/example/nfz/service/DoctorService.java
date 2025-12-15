@@ -1,11 +1,9 @@
 package com.example.nfz.service;
 
-import com.example.nfz.util.DetailedDoctorDTO;
-import com.example.nfz.util.DoctorDTO;
-import com.example.nfz.util.DoctorNotFoundException;
+import com.example.nfz.model.Specialization;
+import com.example.nfz.util.*;
 import com.example.nfz.model.Doctor;
 import com.example.nfz.repository.DoctorRepository;
-import com.example.nfz.util.FormDoctorDTO;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
@@ -51,9 +49,11 @@ public class DoctorService {
         doctorRepository.delete(doctor);
     }
 
-    public Doctor saveDoctor(FormDoctorDTO doctor) {
+    public Doctor saveDoctor(FormDoctorDTO doctor) throws SpecializationNotFoundException {
+        Specialization specialization = Specialization.getSpecialization(doctor.specialization());
+
         return doctorRepository.save(new Doctor(doctor.firstName(),doctor.lastName(),
-                doctor.PESEL(),doctor.specialization(),doctor.street(),doctor.city(),doctor.zipcode()));
+                doctor.PESEL(),specialization,doctor.street(),doctor.city(),doctor.zipcode()));
     }
 
 

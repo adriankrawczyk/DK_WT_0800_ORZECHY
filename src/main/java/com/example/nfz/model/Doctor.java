@@ -16,7 +16,8 @@ public class Doctor {
     private String firstName;
     private String lastName;
     private String PESEL;
-    private String specialization;
+    @Enumerated(EnumType.STRING)
+    private Specialization specialization;
 //    private String street;
 //    private String city;
 //    private String zipCode;
@@ -39,7 +40,7 @@ public class Doctor {
         return Objects.hash(firstName, lastName, PESEL, specialization, address);
     }
 
-    public Doctor(String firstName, String lastName, String PESEL, String specialization, String street, String city, String zipCode) {
+    public Doctor(String firstName, String lastName, String PESEL, Specialization specialization, String street, String city, String zipCode) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.PESEL = PESEL;
@@ -66,7 +67,7 @@ public class Doctor {
         return address.street();
     }
 
-    public String getSpecialization() {
+    public Specialization getSpecialization() {
         return specialization;
     }
 
