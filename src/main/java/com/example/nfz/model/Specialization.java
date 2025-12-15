@@ -19,10 +19,10 @@ public enum Specialization {
 
 
 
-    @Override
-    public String toString() {
-        return specName;
-    }
+//    @Override
+//    public String toString() {
+//        return specName;
+//    }
 
 
     @JsonValue

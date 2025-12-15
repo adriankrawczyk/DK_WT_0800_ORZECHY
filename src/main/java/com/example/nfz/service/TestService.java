@@ -18,12 +18,14 @@ public class TestService {
     }
 
     @PostConstruct
-    public void onServiceStarted(){
+    private void onServiceStarted(){
         System.out.println("test service starting stuff...");
     }
 
 
-
+    /**
+     * initializes the database to a specific sta
+     */
     public void initDataBase(){
         doctorRepository.deleteAll();
 

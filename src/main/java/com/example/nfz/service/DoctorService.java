@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service responsible for managing {@link Doctor} entities.
+ *
+ * <p>Provides CRUD operations and business validation logic.</p>
+ */
 @Service
 public class DoctorService {
 
@@ -20,35 +25,73 @@ public class DoctorService {
     }
 
     @PostConstruct
-    public void onServiceStarted(){
+    private void onServiceStarted(){
         System.out.println("doctor service starting stuff...");
     }
 
+
+    /**
+     * Returns the list of all doctors in the database
+     *
+     * @return list of found {@link Doctor}
+     */
     public List<Doctor> getDoctors(){
         return doctorRepository.findAll();
     }
 
-
+    /**
+     * Returns the list of all doctors in the database
+     * and converts it to {@link DoctorDTO}
+     *
+     * @return list of {@link DoctorDTO}
+     */
     public List<DoctorDTO> getDoctorDTOs(){
-        return doctorRepository.findAll().stream()
+        return getDoctors().stream()
             .map(DoctorDTO::new)
             .toList();
     }
 
+    /**
+     * Returns a doctor by its private identifier
+     *
+     * @param id unique doctor id
+     * @return found {@link Doctor}
+     * @throws DoctorNotFoundException if no doctor exists with given id
+     */
     public Doctor getDoctorById(int id) throws DoctorNotFoundException {
         return doctorRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
     }
 
+    /**
+     * Returns a doctor by its private identifier
+     * converted to {@link DoctorDTO}
+     *
+     * @param id unique doctor id
+     * @return found {@link Doctor} mapped to {@link DoctorDTO}
+     * @throws DoctorNotFoundException if no doctor exists with given id
+     */
     public DetailedDoctorDTO getDetailedDoctorDTOById(int id) throws DoctorNotFoundException {
-        return new DetailedDoctorDTO(doctorRepository.findById(id)
-                .orElseThrow(DoctorNotFoundException::new));
+        return new DetailedDoctorDTO(getDoctorById(id));
     }
 
+    /**
+     * Deletes a doctor by its private identifier
+     *
+     * @param id unique doctor id
+     * @throws DoctorNotFoundException if no doctor exists with given id
+     */
     public void deleteDoctorById(int id) throws DoctorNotFoundException {
-        Doctor doctor = doctorRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
+        Doctor doctor = getDoctorById(id);
         doctorRepository.delete(doctor);
     }
 
+    /**
+     * Adds a new doctor to the database
+     *
+     * @param doctor form for adding a doctor
+     * @return created {@link Doctor}
+     * @throws SpecializationNotFoundException if given specialization is not supported
+     */
     public Doctor saveDoctor(FormDoctorDTO doctor) throws SpecializationNotFoundException {
         Specialization specialization = Specialization.getSpecialization(doctor.specialization());
 
