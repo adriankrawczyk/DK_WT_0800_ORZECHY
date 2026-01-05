@@ -4,6 +4,8 @@ import com.example.nfz.util.Address;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -23,6 +25,9 @@ public class Doctor {
 //    private String zipCode;
     @Embedded
     private Address address;
+
+    @OneToMany(mappedBy = "doctor")
+    private List<Schedule> schedules = new ArrayList<>();
 
     public Doctor() {
 
@@ -73,6 +78,11 @@ public class Doctor {
 
     public String getPESEL() {
         return PESEL;
+    }
+
+    @JsonIgnore
+    public List<Schedule> getSchedules() {
+        return schedules;
     }
 
     public int getId() {

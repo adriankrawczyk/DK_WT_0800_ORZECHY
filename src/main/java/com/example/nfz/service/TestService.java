@@ -2,14 +2,17 @@ package com.example.nfz.service;
 
 import com.example.nfz.model.Doctor;
 import com.example.nfz.model.Office;
+import com.example.nfz.model.Schedule;
 import com.example.nfz.model.Specialization;
 import com.example.nfz.repository.DoctorRepository;
 import com.example.nfz.repository.OfficeRepository;
+import com.example.nfz.repository.ScheduleRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -17,10 +20,12 @@ public class TestService {
 
     private final DoctorRepository doctorRepository;
     private final OfficeRepository officeRepository;
+    private final ScheduleRepository scheduleRepository;
 
-    public TestService(DoctorRepository doctorRepository, OfficeRepository officeRepository) {
+    public TestService(DoctorRepository doctorRepository, OfficeRepository officeRepository, ScheduleRepository scheduleRepository) {
         this.doctorRepository = doctorRepository;
         this.officeRepository = officeRepository;
+        this.scheduleRepository = scheduleRepository;
     }
 
     @PostConstruct
@@ -34,7 +39,10 @@ public class TestService {
      */
     @Transactional
     public void initDataBase() {
+        scheduleRepository.deleteAll();
+        scheduleRepository.flush();
         doctorRepository.deleteAll();
+        doctorRepository.flush();
         officeRepository.deleteAll();
         officeRepository.flush();
 
@@ -71,6 +79,18 @@ public class TestService {
         Office office2 = new Office(2);
         Office office3 = new Office(3);
         officeRepository.saveAll(List.of(office1, office2, office3));
+
+        Schedule schedule1 = new Schedule(  LocalTime.of(11,30),
+                                            LocalTime.of(12,0),
+                                            office1,
+                                            doctor1);
+
+        office1.getSchedules().add(schedule1);
+        doctor1.getSchedules().add(schedule1);
+
+        scheduleRepository.save(schedule1);
+        officeRepository.save(office1);
+        doctorRepository.save(doctor1);
 
 
     }

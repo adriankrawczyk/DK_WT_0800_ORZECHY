@@ -1,4 +1,4 @@
-package com.example.nfz.util;
+package com.example.nfz.util.dto;
 
 import com.example.nfz.model.Doctor;
 import com.example.nfz.model.Specialization;

@@ -1,4 +1,4 @@
-package com.example.nfz.util;
+package com.example.nfz.util.dto;
 
 public record FormOfficeDTO (Integer roomNumber){
 }

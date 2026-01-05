@@ -1,12 +1,12 @@
 package com.example.nfz.presentation;
 
-import com.example.nfz.model.Doctor;
 import com.example.nfz.model.Office;
-import com.example.nfz.repository.DoctorRepository;
-import com.example.nfz.repository.OfficeRepository;
 import com.example.nfz.service.OfficeService;
 import com.example.nfz.service.TestService;
 import com.example.nfz.util.*;
+import com.example.nfz.util.dto.DetailedOfficeDTO;
+import com.example.nfz.util.dto.FormOfficeDTO;
+import com.example.nfz.util.dto.OfficeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;

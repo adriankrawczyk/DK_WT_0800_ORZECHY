@@ -1,10 +1,12 @@
 package com.example.nfz.presentation;
 
-import com.example.nfz.repository.DoctorRepository;
 import com.example.nfz.service.TestService;
 import com.example.nfz.util.*;
 import com.example.nfz.model.Doctor;
 import com.example.nfz.service.DoctorService;
+import com.example.nfz.util.dto.DetailedDoctorDTO;
+import com.example.nfz.util.dto.DoctorDTO;
+import com.example.nfz.util.dto.FormDoctorDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,7 +20,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(path = "doctors")
