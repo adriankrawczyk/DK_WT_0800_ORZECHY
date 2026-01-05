@@ -2,6 +2,7 @@ package com.example.nfz.configuration;
 
 import com.example.nfz.repository.DoctorRepository;
 import com.example.nfz.repository.OfficeRepository;
+import com.example.nfz.repository.PatientRepository;
 import com.example.nfz.repository.ScheduleRepository;
 import com.example.nfz.service.DoctorService;
 import com.example.nfz.service.ScheduleService;
@@ -16,11 +17,13 @@ public class DoctorEmptyConfigurator {
     private final DoctorRepository doctorRepository;
     private final ScheduleRepository scheduleRepository;
     private final OfficeRepository officeRepository;
+    private final PatientRepository patientRepository;
 
-    public DoctorEmptyConfigurator(DoctorRepository doctorRepository, ScheduleRepository scheduleRepository, OfficeRepository officeRepository) {
+    public DoctorEmptyConfigurator(DoctorRepository doctorRepository, ScheduleRepository scheduleRepository, OfficeRepository officeRepository, PatientRepository patientRepository) {
         this.doctorRepository = doctorRepository;
         this.scheduleRepository = scheduleRepository;
         this.officeRepository = officeRepository;
+        this.patientRepository = patientRepository;
     }
 
     @PostConstruct
@@ -34,6 +37,10 @@ public class DoctorEmptyConfigurator {
         }
         if (officeRepository.count() != 0) {
             officeRepository.deleteAll();
+        }
+
+        if (patientRepository.count() != 0) {
+            patientRepository.deleteAll();
         }
     }
 }

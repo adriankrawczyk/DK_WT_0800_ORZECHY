@@ -85,6 +85,7 @@ public class DoctorService {
      *
      * @param id unique doctor id
      * @throws DoctorNotFoundException if no doctor exists with given id
+     * @throws IsBeingScheduledException if is being scheduled
      */
     public void deleteDoctorById(int id) throws DoctorNotFoundException, IsBeingScheduledException {
         Doctor doctor = getDoctorById(id);
