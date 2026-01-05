@@ -64,7 +64,7 @@ public class DoctorService {
 
     /**
      * Returns a doctor by its private identifier
-     * converted to {@link DoctorDTO}
+     * converted to {@link DetailedOfficeDTO}
      *
      * @param id unique doctor id
      * @return found {@link Doctor} mapped to {@link DoctorDTO}
