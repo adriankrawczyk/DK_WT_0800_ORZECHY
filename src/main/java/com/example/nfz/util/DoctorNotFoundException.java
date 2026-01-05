@@ -1,4 +1,4 @@
-package com.example.nfz.doctor;
+package com.example.nfz.util;
 
 public class DoctorNotFoundException extends Exception {
 

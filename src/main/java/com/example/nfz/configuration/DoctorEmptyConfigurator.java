@@ -1,5 +1,6 @@
-package com.example.nfz.doctor;
+package com.example.nfz.configuration;
 
+import com.example.nfz.repository.DoctorRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
