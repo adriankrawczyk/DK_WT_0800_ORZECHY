@@ -84,8 +84,9 @@ public class DoctorService {
      * @param id unique doctor id
      * @throws DoctorNotFoundException if no doctor exists with given id
      */
-    public void deleteDoctorById(int id) throws DoctorNotFoundException {
+    public void deleteDoctorById(int id) throws DoctorNotFoundException, IsBeingScheduledException {
         Doctor doctor = getDoctorById(id);
+        if(!doctor.getSchedules().isEmpty()) throw new IsBeingScheduledException();
         doctorRepository.delete(doctor);
     }
 

@@ -85,6 +85,7 @@ public class DoctorController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "doctor not found"),
+            @ApiResponse(responseCode = "403", description = "doctor is being scheduled"),
             @ApiResponse(responseCode = "200", description = "Ok",
                     content ={
                         @Content(mediaType = "application/json",
@@ -100,7 +101,9 @@ public class DoctorController {
                     new InfoApiResponse("doctor has been deleted")
             );
         }catch(DoctorNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "doctor not found");
+        } catch (IsBeingScheduledException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "doctor is being scheduled");
         }
     }
 

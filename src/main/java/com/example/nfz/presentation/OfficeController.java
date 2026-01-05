@@ -83,6 +83,7 @@ public class OfficeController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "office not found"),
+            @ApiResponse(responseCode = "403", description = "office is being scheduled"),
             @ApiResponse(responseCode = "200", description = "Ok",
                     content ={
                             @Content(mediaType = "application/json",
@@ -99,6 +100,8 @@ public class OfficeController {
             );
         }catch(OfficeNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "office not found");
+        } catch (IsBeingScheduledException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "office is being scheduled");
         }
     }
 

@@ -9,6 +9,7 @@ import com.example.nfz.util.dto.OfficeDTO;
 import jakarta.annotation.PostConstruct;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -74,10 +75,14 @@ public class OfficeService {
      * Deletes an office by its private identifier
      *
      * @param id unique office id
-     * @throws OfficeNotFoundException if no doctor exists with given id
+     * @throws OfficeNotFoundException if no office exists with given id
+     * @throws IsBeingScheduledException if there exists a schedule with this office
      */
-    public void deleteOfficeById(int id) throws OfficeNotFoundException {
+    @Transactional
+    public void deleteOfficeById(int id) throws OfficeNotFoundException, IsBeingScheduledException {
         Office office = getOfficeById(id);
+        if(!office.getSchedules().isEmpty()) throw new IsBeingScheduledException();
+
         officeRepository.delete(office);
     }
 
