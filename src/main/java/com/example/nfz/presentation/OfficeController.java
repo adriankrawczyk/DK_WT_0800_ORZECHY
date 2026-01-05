@@ -91,7 +91,7 @@ public class OfficeController {
                     }
             )
     })
-    public ResponseEntity<InfoApiResponse> deleteDoctor(@PathVariable String id) {
+    public ResponseEntity<InfoApiResponse> deleteOffice(@PathVariable String id) {
         try{
             officeService.deleteOfficeById(Integer.parseInt(id));
             return  ResponseEntity.ok(

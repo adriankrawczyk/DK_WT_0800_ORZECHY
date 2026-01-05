@@ -81,7 +81,7 @@ public class TestService {
         officeRepository.saveAll(List.of(office1, office2, office3));
 
         Schedule schedule1 = new Schedule(  LocalTime.of(11,30),
-                                            LocalTime.of(12,0),
+                                            LocalTime.of(12,30),
                                             office1,
                                             doctor1);
 

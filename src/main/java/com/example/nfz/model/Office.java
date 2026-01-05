@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Office {
@@ -37,5 +38,17 @@ public class Office {
 
     public int getRoomNumber() {
         return roomNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Office office = (Office) o;
+        return roomNumber == office.roomNumber;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(roomNumber);
     }
 }
