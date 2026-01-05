@@ -2,10 +2,12 @@ package com.example.nfz.service;
 
 import com.example.nfz.model.Office;
 import com.example.nfz.repository.OfficeRepository;
-import com.example.nfz.util.*;
 import com.example.nfz.util.dto.DetailedOfficeDTO;
 import com.example.nfz.util.dto.FormOfficeDTO;
 import com.example.nfz.util.dto.OfficeDTO;
+import com.example.nfz.util.exceptions.IsBeingScheduledException;
+import com.example.nfz.util.exceptions.OfficeAlreadyExistsException;
+import com.example.nfz.util.exceptions.OfficeNotFoundException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;

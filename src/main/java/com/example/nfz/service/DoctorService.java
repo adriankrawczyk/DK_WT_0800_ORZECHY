@@ -1,13 +1,15 @@
 package com.example.nfz.service;
 
 import com.example.nfz.model.Specialization;
-import com.example.nfz.util.*;
 import com.example.nfz.model.Doctor;
 import com.example.nfz.repository.DoctorRepository;
 import com.example.nfz.util.dto.DetailedDoctorDTO;
 import com.example.nfz.util.dto.DetailedOfficeDTO;
 import com.example.nfz.util.dto.DoctorDTO;
 import com.example.nfz.util.dto.FormDoctorDTO;
+import com.example.nfz.util.exceptions.DoctorNotFoundException;
+import com.example.nfz.util.exceptions.IsBeingScheduledException;
+import com.example.nfz.util.exceptions.SpecializationNotFoundException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 

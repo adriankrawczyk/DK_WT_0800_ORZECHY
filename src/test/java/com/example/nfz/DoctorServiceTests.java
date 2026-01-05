@@ -2,7 +2,7 @@ package com.example.nfz;
 
 import com.example.nfz.model.Specialization;
 import com.example.nfz.service.TestService;
-import com.example.nfz.util.DoctorNotFoundException;
+import com.example.nfz.util.exceptions.DoctorNotFoundException;
 import com.example.nfz.model.Doctor;
 import com.example.nfz.repository.DoctorRepository;
 import com.example.nfz.service.DoctorService;

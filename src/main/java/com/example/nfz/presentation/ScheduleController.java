@@ -1,14 +1,15 @@
 package com.example.nfz.presentation;
 
-import com.example.nfz.model.Office;
 import com.example.nfz.model.Schedule;
 import com.example.nfz.service.ScheduleService;
 import com.example.nfz.service.TestService;
 import com.example.nfz.util.*;
 import com.example.nfz.util.dto.DetailedScheduleDTO;
-import com.example.nfz.util.dto.FormOfficeDTO;
 import com.example.nfz.util.dto.FormScheduleDTO;
-import com.example.nfz.util.dto.ScheduleNotFoundException;
+import com.example.nfz.util.exceptions.DoctorNotFoundException;
+import com.example.nfz.util.exceptions.ImpossibleScheduleException;
+import com.example.nfz.util.exceptions.OfficeNotFoundException;
+import com.example.nfz.util.exceptions.ScheduleNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;

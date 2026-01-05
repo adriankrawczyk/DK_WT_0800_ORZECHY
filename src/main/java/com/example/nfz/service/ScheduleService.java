@@ -6,12 +6,12 @@ import com.example.nfz.model.Schedule;
 import com.example.nfz.repository.DoctorRepository;
 import com.example.nfz.repository.OfficeRepository;
 import com.example.nfz.repository.ScheduleRepository;
-import com.example.nfz.util.DoctorNotFoundException;
-import com.example.nfz.util.ImpossibleScheduleException;
-import com.example.nfz.util.OfficeNotFoundException;
+import com.example.nfz.util.exceptions.DoctorNotFoundException;
+import com.example.nfz.util.exceptions.ImpossibleScheduleException;
+import com.example.nfz.util.exceptions.OfficeNotFoundException;
 import com.example.nfz.util.dto.DetailedScheduleDTO;
 import com.example.nfz.util.dto.FormScheduleDTO;
-import com.example.nfz.util.dto.ScheduleNotFoundException;
+import com.example.nfz.util.exceptions.ScheduleNotFoundException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ScheduleService {
@@ -38,8 +39,8 @@ public class ScheduleService {
         this.doctorRepository = doctorRepository;
     }
 
-    private boolean checkSchedulesCollisions(Schedule newSchedule, List<Schedule> doctorSchedules,
-                                            List<Schedule> officeSchedules) {
+    private boolean checkSchedulesCollisions(Schedule newSchedule, Set<Schedule> doctorSchedules,
+                                            Set<Schedule> officeSchedules) {
         if(newSchedule.getStartTime().isBefore(minStartTime) ||
                 newSchedule.getEndTime().isAfter(maxEndTime)) return true;
 
@@ -50,6 +51,20 @@ public class ScheduleService {
             if(newSchedule.collides(schedule)) return true;
         }
         return false;
+    }
+
+    private List<Schedule> getMergableSchedules(Schedule targetSchedule, Set<Schedule> doctorSchedules) {
+        List<Schedule> mergableSchedules = new ArrayList<>();
+        for (Schedule schedule : doctorSchedules) {
+            if(targetSchedule.canMergeWith(schedule)) {
+                mergableSchedules.add(schedule);
+            }
+        }
+        mergableSchedules.add(targetSchedule);
+        for (Schedule schedule : mergableSchedules) {
+            System.out.println(schedule);
+        }
+        return mergableSchedules;
     }
 
     @PostConstruct
@@ -81,10 +96,11 @@ public class ScheduleService {
 
     /**
      * Adds a new schedule to database
+     * Merges with existing schedules if available
      * @param formScheduleDTO form for adding a schedule
      * @return created {@link Schedule}
-     * @throws DoctorNotFoundException if doctor does not exists
-     * @throws OfficeNotFoundException  if office does not exists
+     * @throws DoctorNotFoundException if doctor does not exist
+     * @throws OfficeNotFoundException  if office does not exist
      * @throws ImpossibleScheduleException if schedule collides with any other schedule or opening hours
      */
     @Transactional
@@ -94,15 +110,34 @@ public class ScheduleService {
         Office requestOffice = officeRepository.findById(formScheduleDTO.officeId())
                 .orElseThrow(OfficeNotFoundException::new);
 
-        //Żeby dyżur trwał co najm godzinę
-        Duration duration = Duration.between(formScheduleDTO.startTime(), formScheduleDTO.endTime());
-        if(duration.toHours()<1) throw new ImpossibleScheduleException();
-
         Schedule newSchedule = new Schedule(formScheduleDTO.startTime(), formScheduleDTO.endTime(),
                 requestOffice,requestDoctor);
 
+        //kolizje godzinowe
         if(checkSchedulesCollisions(newSchedule,requestDoctor.getSchedules(), requestOffice.getSchedules()))
             throw new ImpossibleScheduleException();
+
+        //znajdz możliwe do połączenia dyżury
+        List<Schedule> mergableSchedules = getMergableSchedules(newSchedule, requestDoctor.getSchedules());
+
+        //jesli są, połacz
+        if(mergableSchedules.size()>1)
+            newSchedule = Schedule.mergedFrom(mergableSchedules);
+
+
+
+        //Żeby dyżur trwał co najm godzinę
+        Duration duration = Duration.between(newSchedule.getStartTime(), newSchedule.getEndTime());
+        if(duration.toHours()<1) throw new ImpossibleScheduleException();
+
+        //usun zbedne dyżury
+        for(Schedule schedule : mergableSchedules) {
+            requestOffice.getSchedules().remove(schedule);
+            requestDoctor.getSchedules().add(schedule);
+
+            scheduleRepository.delete(schedule);
+        }
+
 
         scheduleRepository.save(newSchedule);
 

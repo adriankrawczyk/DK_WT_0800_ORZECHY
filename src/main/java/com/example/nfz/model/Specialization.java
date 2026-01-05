@@ -1,6 +1,6 @@
 package com.example.nfz.model;
 
-import com.example.nfz.util.SpecializationNotFoundException;
+import com.example.nfz.util.exceptions.SpecializationNotFoundException;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Arrays;

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalTime;
+import java.util.List;
 
 public class ScheduleTests {
 
@@ -22,6 +23,8 @@ public class ScheduleTests {
 
     LocalTime time1 = LocalTime.of(1,0,0);
     LocalTime time2 = LocalTime.of(2,0,0);
+    LocalTime time3 = LocalTime.of(3,0,0);
+    LocalTime time4 = LocalTime.of(4,0,0);
 
     @Test
     public void collisionTest(){
@@ -42,5 +45,41 @@ public class ScheduleTests {
         Assertions.assertTrue(schedule1.collides(schedule4));
 
         Assertions.assertFalse(schedule1.collides(schedule5));
+    }
+
+    @Test
+    public void canMergeSchedulesTest(){
+        Schedule schedule1 = new Schedule(time1,time2,office1,doctor1);
+        Schedule schedule2 = new Schedule(time1,time2,office1,doctor1);
+        Schedule schedule3 = new Schedule(time2,time3,office1,doctor1);
+        Schedule schedule4 = new Schedule(time3,time4,office1,doctor1);
+        Schedule schedule5 = new Schedule(time2,time3,office1,doctor2);
+
+        Assertions.assertTrue(schedule1.canMergeWith(schedule3));
+        Assertions.assertTrue(schedule3.canMergeWith(schedule1));
+
+        Assertions.assertFalse(schedule1.canMergeWith(schedule4));
+        Assertions.assertFalse(schedule1.canMergeWith(schedule2));
+
+        Assertions.assertTrue(schedule3.canMergeWith(schedule4));
+
+        Assertions.assertFalse(schedule1.canMergeWith(schedule5));
+
+    }
+
+    @Test
+    public void mergeTest(){
+        Schedule schedule1 = new Schedule(time1,time2,office1,doctor1);
+        Schedule schedule2 = new Schedule(time2,time3,office1,doctor1);
+        Schedule schedule3 = new Schedule(time3,time4,office1,doctor1);
+
+        Schedule schedule4 = new Schedule(time1,time3,office1,doctor1);
+        Schedule schedule5 = new Schedule(time1,time4,office1,doctor1);
+
+        Schedule mergedSchedule1 = Schedule.mergedFrom(List.of(schedule1,schedule2));
+        Schedule mergedSchedule2 = Schedule.mergedFrom(List.of(schedule3,schedule2,schedule1));
+
+        Assertions.assertEquals(mergedSchedule1, schedule4);
+        Assertions.assertEquals(mergedSchedule2, schedule5);
     }
 }

@@ -3,9 +3,7 @@ package com.example.nfz.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 public class Office {
@@ -18,7 +16,7 @@ public class Office {
     private int roomNumber;
 
     @OneToMany(mappedBy = "office")
-    private List<Schedule> schedules = new ArrayList<>();
+    private Set<Schedule> schedules = new HashSet<>();
 
     public Office() {
     }
@@ -28,7 +26,7 @@ public class Office {
     }
 
     @JsonIgnore
-    public List<Schedule> getSchedules() {
+    public Set<Schedule> getSchedules() {
         return schedules;
     }
 

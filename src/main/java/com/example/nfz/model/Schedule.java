@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -73,8 +74,10 @@ public class Schedule {
         //jesli nie mają wspólnego lekarza i gabinetu, to nie koliduje
         else if(!(this.doctor.equals(schedule.getDoctor()) ||
                   this.office.equals(schedule.getOffice())  ) )return false;
+
         else if(this.startTime.equals(schedule.getStartTime() )) return true;
         else if(this.endTime.equals(schedule.getEndTime() )) return true;
+
         else if(this.startTime.isAfter(schedule.getStartTime()) &&
                 this.startTime.isBefore(schedule.getEndTime())) return true;
 
@@ -87,5 +90,38 @@ public class Schedule {
         else if(schedule.getEndTime().isAfter(this.startTime) &&
                 schedule.getEndTime().isBefore(this.endTime)) return true;
         else return false;
+    }
+
+    public boolean canMergeWith(Schedule schedule) {
+        if(!(   this.doctor.equals(schedule.getDoctor()) &&
+                this.office.equals(schedule.getOffice())  ) ) return false;
+
+        if(this.startTime.equals(schedule.getEndTime()) || this.endTime.equals(schedule.getStartTime()) ) return true;
+        else return false;
+    }
+
+    public static Schedule mergedFrom(List<Schedule> schedules){
+        LocalTime minStartTime = LocalTime.MAX;
+        LocalTime maxEndTime = LocalTime.MIN;
+
+        for(Schedule schedule : schedules){
+            if(schedule.getStartTime().isBefore(minStartTime))
+                minStartTime = schedule.getStartTime();
+            if(schedule.getEndTime().isAfter(maxEndTime))
+                maxEndTime = schedule.getEndTime();
+        }
+
+        return new Schedule(minStartTime,maxEndTime,schedules.get(0).getOffice(),schedules.get(0).getDoctor());
+    }
+
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "id=" + id +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", office=" + office.getId()  +
+                ", doctor=" + doctor.getId()  +
+                '}';
     }
 }

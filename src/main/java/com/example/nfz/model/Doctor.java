@@ -4,9 +4,7 @@ import com.example.nfz.util.Address;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 public class Doctor {
@@ -27,7 +25,7 @@ public class Doctor {
     private Address address;
 
     @OneToMany(mappedBy = "doctor")
-    private List<Schedule> schedules = new ArrayList<>();
+    private Set<Schedule> schedules = new HashSet<>();
 
     public Doctor() {
 
@@ -81,7 +79,7 @@ public class Doctor {
     }
 
     @JsonIgnore
-    public List<Schedule> getSchedules() {
+    public Set<Schedule> getSchedules() {
         return schedules;
     }
 
