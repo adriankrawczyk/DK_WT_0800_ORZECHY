@@ -4,8 +4,7 @@ import com.example.nfz.model.Schedule;
 import com.example.nfz.service.ScheduleService;
 import com.example.nfz.service.TestService;
 import com.example.nfz.util.*;
-import com.example.nfz.util.dto.DetailedScheduleDTO;
-import com.example.nfz.util.dto.FormScheduleDTO;
+import com.example.nfz.util.dto.*;
 import com.example.nfz.util.exceptions.DoctorNotFoundException;
 import com.example.nfz.util.exceptions.ImpossibleScheduleException;
 import com.example.nfz.util.exceptions.OfficeNotFoundException;
@@ -21,7 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping(path = "schedules")
@@ -109,5 +110,55 @@ public class ScheduleController {
         }catch(ScheduleNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "schedule not found");
         }
+    }
+
+    @GetMapping("/doctors")
+    @Operation(
+            summary = "find free doctors in a given timeslot",
+            description = "returns a list of free doctors in a given timeslot"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content ={
+                            @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = DoctorDTO.class)
+                                    )
+                            )
+                    })
+    })
+    public List<DoctorDTO> getFreeDoctors(@RequestParam String startTime,
+                                          @RequestParam String endTime) {
+
+        return scheduleService.getFreeDoctors(
+                new TimeSlotDTO(
+                        LocalTime.parse(startTime),
+                        LocalTime.parse(endTime))
+        );
+    }
+
+    @GetMapping("/offices")
+    @Operation(
+            summary = "find free offices in a given timeslot",
+            description = "returns a list of free offices in a given timeslot"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content ={
+                            @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = OfficeDTO.class)
+                                    )
+                            )
+                    })
+    })
+    public List<OfficeDTO> getFreeOffices(@RequestParam String startTime,
+                                          @RequestParam String endTime) {
+
+        return scheduleService.getFreeOffices(
+                new TimeSlotDTO(
+                        LocalTime.parse(startTime),
+                        LocalTime.parse(endTime))
+        );
     }
 }

@@ -6,11 +6,10 @@ import com.example.nfz.model.Schedule;
 import com.example.nfz.repository.DoctorRepository;
 import com.example.nfz.repository.OfficeRepository;
 import com.example.nfz.repository.ScheduleRepository;
+import com.example.nfz.util.dto.*;
 import com.example.nfz.util.exceptions.DoctorNotFoundException;
 import com.example.nfz.util.exceptions.ImpossibleScheduleException;
 import com.example.nfz.util.exceptions.OfficeNotFoundException;
-import com.example.nfz.util.dto.DetailedScheduleDTO;
-import com.example.nfz.util.dto.FormScheduleDTO;
 import com.example.nfz.util.exceptions.ScheduleNotFoundException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
@@ -49,6 +48,16 @@ public class ScheduleService {
         }
         for (Schedule schedule : officeSchedules) {
             if(newSchedule.collides(schedule)) return true;
+        }
+        return false;
+    }
+
+    private boolean checkTimeSlotCollisions(TimeSlotDTO timeSlot, Set<Schedule> schedules) {
+        if(timeSlot.startTime().isBefore(minStartTime) ||
+                timeSlot.endTime().isAfter(maxEndTime)) return true;
+
+        for (Schedule schedule : schedules) {
+            if(schedule.collides(timeSlot)) return true;
         }
         return false;
     }
@@ -93,6 +102,34 @@ public class ScheduleService {
                 .toList();
     }
 
+    /**
+     *
+     * @param timeSlot timeslot in which we search for free offices
+     * @return list off free offices
+     */
+    public List<OfficeDTO> getFreeOffices(TimeSlotDTO timeSlot) {
+
+        List<Office> offices = officeRepository.findAll();
+
+        return offices.stream()
+                .filter(office -> !checkTimeSlotCollisions(timeSlot,office.getSchedules()))
+                .map(OfficeDTO::new)
+                .toList();
+    }
+
+    /**
+     *
+     * @param timeSlot timeslot in which we search for free doctors
+     * @return list off free doctors
+     */
+    public  List<DoctorDTO> getFreeDoctors(TimeSlotDTO timeSlot) {
+        List<Doctor> doctors = doctorRepository.findAll();
+
+        return doctors.stream()
+                .filter(doctor -> !checkTimeSlotCollisions(timeSlot,doctor.getSchedules()))
+                .map(DoctorDTO::new)
+                .toList();
+    }
 
     /**
      * Adds a new schedule to database

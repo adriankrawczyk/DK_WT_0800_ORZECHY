@@ -1,5 +1,6 @@
 package com.example.nfz.model;
 
+import com.example.nfz.util.dto.TimeSlotDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -89,6 +90,24 @@ public class Schedule {
 
         else if(schedule.getEndTime().isAfter(this.startTime) &&
                 schedule.getEndTime().isBefore(this.endTime)) return true;
+        else return false;
+    }
+
+    public boolean collides(TimeSlotDTO schedule) {
+        if(this.startTime.equals(schedule.startTime() )) return true;
+        else if(this.endTime.equals(schedule.endTime() )) return true;
+
+        else if(this.startTime.isAfter(schedule.startTime()) &&
+                this.startTime.isBefore(schedule.endTime())) return true;
+
+        else if(this.endTime.isAfter(schedule.startTime()) &&
+                this.endTime.isBefore(schedule.endTime())) return true;
+
+        else if(schedule.startTime().isAfter(this.startTime) &&
+                schedule.startTime().isBefore(this.endTime)) return true;
+
+        else if(schedule.endTime().isAfter(this.startTime) &&
+                schedule.endTime().isBefore(this.endTime)) return true;
         else return false;
     }
 
