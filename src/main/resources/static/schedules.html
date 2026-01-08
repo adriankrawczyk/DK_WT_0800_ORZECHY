@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>System Zarządzania Lekarzami NFZ</title>
+    <title>Dyżury - System NFZ</title>
     <style>
       * {
         box-sizing: border-box;
@@ -59,12 +59,17 @@
         font-weight: 500;
       }
 
+      button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+
       .btn-primary {
         background: #667eea;
         color: white;
       }
 
-      .btn-primary:hover {
+      .btn-primary:hover:not(:disabled) {
         background: #5a6fd6;
       }
 
@@ -91,7 +96,7 @@
         color: white;
       }
 
-      .btn-success:hover {
+      .btn-success:hover:not(:disabled) {
         background: #218838;
       }
 
@@ -178,7 +183,7 @@
         padding: 30px;
         border-radius: 10px;
         width: 90%;
-        max-width: 500px;
+        max-width: 600px;
         position: relative;
         margin-bottom: 50px;
       }
@@ -212,7 +217,8 @@
         font-weight: 500;
       }
 
-      .form-group input {
+      .form-group input,
+      .form-group select {
         width: 100%;
         padding: 10px;
         border: 1px solid #ddd;
@@ -220,7 +226,8 @@
         font-size: 14px;
       }
 
-      .form-group input:focus {
+      .form-group input:focus,
+      .form-group select:focus {
         outline: none;
         border-color: #667eea;
       }
@@ -281,26 +288,92 @@
         padding: 6px 12px;
         font-size: 12px;
       }
+
+      .step {
+        display: none;
+      }
+
+      .step.active {
+        display: block;
+      }
+
+      .step-indicator {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        gap: 10px;
+      }
+
+      .step-indicator span {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #666;
+      }
+
+      .step-indicator span.active {
+        background: #667eea;
+        color: white;
+      }
+
+      .selection-list {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+
+      .selection-item {
+        padding: 10px 15px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .selection-item:hover {
+        background: #f0f0f0;
+      }
+
+      .selection-item.selected {
+        background: #667eea;
+        color: white;
+      }
+
+      .selection-item:last-child {
+        border-bottom: none;
+      }
+
+      .time-inputs {
+        display: flex;
+        gap: 15px;
+      }
+
+      .time-inputs .form-group {
+        flex: 1;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <header>
-        <h1>System Zarządzania Lekarzami NFZ</h1>
-        <p>Aplikacja do zarządzania bazą danych lekarzy</p>
+        <h1>System Zarządzania Dyżurami NFZ</h1>
+        <p>Zarządzanie dyżurami lekarzy</p>
       </header>
 
       <div id="alert" class="alert"></div>
 
       <div class="actions">
         <button class="btn-primary" onclick="openAddModal()">
-          Dodaj Lekarza
+          Dodaj Dyżur
         </button>
-        <button class="btn-secondary" onclick="loadDoctors()">
+        <button class="btn-secondary" onclick="loadSchedules()">
           Odśwież Listę
-        </button>
-        <button class="btn-info" onclick="initDatabase()">
-          Inicjalizuj Bazę Danych
         </button>
         <button class="btn-info" onclick="window.location.href='offices.html'">
           Przejdź do gabinetów
@@ -311,92 +384,77 @@
       </div>
 
       <div class="card">
-        <h2>Lista Lekarzy</h2>
-        <div id="doctorsList">
+        <h2>Lista Dyżurów</h2>
+        <div id="schedulesList">
           <div class="empty-state">Ładowanie danych...</div>
         </div>
       </div>
     </div>
 
-    <!-- Modal Dodawania Lekarza -->
+    <!-- Modal Dodawania Dyżuru - wieloetapowy -->
     <div id="addModal" class="modal">
       <div class="modal-content">
         <span class="close" onclick="closeAddModal()">&times;</span>
-        <h2>Dodaj Nowego Lekarza</h2>
-        <form id="addDoctorForm" onsubmit="addDoctor(event)">
-          <div class="form-group">
-            <label for="firstName">Imię:</label>
-            <input type="text" id="firstName" required placeholder="np. Jan" />
+        <h2>Dodaj Nowy Dyżur</h2>
+        
+        <div class="step-indicator">
+          <span id="step1Indicator" class="active">1</span>
+          <span id="step2Indicator">2</span>
+        </div>
+
+        <!-- Krok 1: Wybór godzin -->
+        <div id="step1" class="step active">
+          <p style="margin-bottom: 15px; color: #666;">Krok 1: Wybierz godziny dyżuru</p>
+          <div class="time-inputs">
+            <div class="form-group">
+              <label for="startTime">Godzina rozpoczęcia:</label>
+              <input type="time" id="startTime" required value="08:00" />
+            </div>
+            <div class="form-group">
+              <label for="endTime">Godzina zakończenia:</label>
+              <input type="time" id="endTime" required value="16:00" />
+            </div>
           </div>
-          <div class="form-group">
-            <label for="lastName">Nazwisko:</label>
-            <input
-              type="text"
-              id="lastName"
-              required
-              placeholder="np. Kowalski"
-            />
-          </div>
-          <div class="form-group">
-            <label for="pesel">PESEL:</label>
-            <input
-              type="text"
-              id="pesel"
-              required
-              placeholder="np. 12345678901"
-              maxlength="11"
-            />
-          </div>
-          <div class="form-group">
-            <label for="specialization">Specjalizacja:</label>
-            <input
-              type="text"
-              id="specialization"
-              required
-              placeholder="np. Kardiologia"
-            />
-          </div>
-          <div class="form-group">
-            <label for="street">Ulica:</label>
-            <input
-              type="text"
-              id="street"
-              required
-              placeholder="np. Kwiatowa 15"
-            />
-          </div>
-          <div class="form-group">
-            <label for="city">Miasto:</label>
-            <input type="text" id="city" required placeholder="np. Kraków" />
-          </div>
-          <div class="form-group">
-            <label for="zipcode">Kod pocztowy:</label>
-            <input type="text" id="zipcode" required placeholder="np. 30-001" />
-          </div>
+          <p style="margin-top: 10px; font-size: 12px; color: #888;">Godziny pracy: 07:00 - 18:00, minimalny czas dyżuru: 1 godzina</p>
           <div class="form-actions">
-            <button type="submit" class="btn-success">Dodaj Lekarza</button>
-            <button
-              type="button"
-              class="btn-secondary"
-              onclick="closeAddModal()"
-            >
+            <button type="button" class="btn-primary" onclick="goToStep2()">
+              Dalej - Szukaj wolnych
+            </button>
+            <button type="button" class="btn-secondary" onclick="closeAddModal()">
               Anuluj
             </button>
           </div>
-        </form>
-      </div>
-    </div>
+        </div>
 
-    <!-- Modal Szczegółów Lekarza -->
-    <div id="detailModal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="closeDetailModal()">&times;</span>
-        <h2>Szczegóły Lekarza</h2>
-        <div id="doctorDetails"></div>
-        <div class="form-actions" style="margin-top: 20px">
-          <button class="btn-secondary" onclick="closeDetailModal()">
-            Zamknij
-          </button>
+        <!-- Krok 2: Wybór lekarza i gabinetu -->
+        <div id="step2" class="step">
+          <p style="margin-bottom: 15px; color: #666;">Krok 2: Wybierz lekarza i gabinet</p>
+          
+          <div class="form-group">
+            <label>Wolni lekarze w wybranym czasie:</label>
+            <div id="doctorsList" class="selection-list">
+              <div class="empty-state">Ładowanie...</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Wolne gabinety w wybranym czasie:</label>
+            <div id="officesList" class="selection-list">
+              <div class="empty-state">Ładowanie...</div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" onclick="goToStep1()">
+              Wstecz
+            </button>
+            <button type="button" class="btn-success" id="saveScheduleBtn" onclick="saveSchedule()" disabled>
+              Zapisz Dyżur
+            </button>
+            <button type="button" class="btn-secondary" onclick="closeAddModal()">
+              Anuluj
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -407,7 +465,7 @@
         <span class="close" onclick="closeDeleteModal()">&times;</span>
         <h2>Potwierdzenie Usunięcia</h2>
         <p id="deleteMessage" style="margin: 20px 0">
-          Czy na pewno chcesz usunąć tego lekarza?
+          Czy na pewno chcesz usunąć ten dyżur?
         </p>
         <div class="form-actions">
           <button class="btn-danger" id="confirmDeleteBtn">Usuń</button>
@@ -420,8 +478,11 @@
 
     <script>
       const API_URL = "http://localhost:8080";
+      
+      let selectedDoctorId = null;
+      let selectedOfficeId = null;
 
-      document.addEventListener("DOMContentLoaded", loadDoctors);
+      document.addEventListener("DOMContentLoaded", loadSchedules);
 
       function showAlert(message, type) {
         const alert = document.getElementById("alert");
@@ -433,25 +494,25 @@
         }, 3000);
       }
 
-      async function loadDoctors() {
+      async function loadSchedules() {
         try {
           const response = await fetch(`${API_URL}/schedules`);
           if (!response.ok) throw new Error("Błąd pobierania danych");
 
-          const doctors = await response.json();
-          displayDoctors(doctors);
+          const schedules = await response.json();
+          displaySchedules(schedules);
         } catch (error) {
-          document.getElementById("doctorsList").innerHTML =
+          document.getElementById("schedulesList").innerHTML =
             '<div class="empty-state">Błąd połączenia z serwerem. Upewnij się, że backend jest uruchomiony.</div>';
         }
       }
 
-      function displayDoctors(doctors) {
-        const container = document.getElementById("doctorsList");
+      function displaySchedules(schedules) {
+        const container = document.getElementById("schedulesList");
 
-        if (doctors.length === 0) {
+        if (schedules.length === 0) {
           container.innerHTML =
-            '<div class="empty-state">Brak lekarzy w bazie danych. Kliknij "Inicjalizuj Bazę Danych" lub "Dodaj Lekarza".</div>';
+            '<div class="empty-state">Brak dyżurów w bazie danych. Kliknij "Dodaj Dyżur" aby utworzyć nowy.</div>';
           return;
         }
 
@@ -463,22 +524,21 @@
                             <th>ID lekarza</th>
                             <th>ID Gabinetu</th>
                             <th>Godziny</th>
-                            <th></th>
+                            <th>Akcje</th>
                         </tr>
                     </thead>
                     <tbody>
             `;
 
-        doctors.forEach((doctor) => {
+        schedules.forEach((schedule) => {
           html += `
                     <tr>
-                        <td>${doctor.id}</td>
-                        <td>${doctor.doctorId}</td>
-                        <td>${doctor.officeId}</td>
-                        <td>${doctor.startTime} - ${doctor.endTime}</td>
+                        <td>${schedule.id}</td>
+                        <td>${schedule.doctorId}</td>
+                        <td>${schedule.officeId}</td>
+                        <td>${schedule.startTime} - ${schedule.endTime}</td>
                         <td class="action-buttons">
-                            <button class="btn-info" onclick="showDoctorDetails(${doctor.id})">Szczegóły</button>
-                            <button class="btn-danger" onclick="confirmDelete(${doctor.id}, '${doctor.firstName} ${doctor.lastName}')">Usuń</button>
+                            <button class="btn-danger" onclick="confirmDelete(${schedule.id})">Usuń</button>
                         </td>
                     </tr>
                 `;
@@ -488,80 +548,12 @@
         container.innerHTML = html;
       }
 
-      async function showDoctorDetails(id) {
-        try {
-          const response = await fetch(`${API_URL}/doctors/${id}`);
-          if (!response.ok) throw new Error("Nie znaleziono lekarza");
-
-          const doctor = await response.json();
-
-          const schedules = doctor.schedules;
-
-          console.log(schedules)
-
-          let detailsHtml = `
-                    <div class="detail-row">
-                        <span class="detail-label">ID:</span>
-                        <span class="detail-value">${doctor.id}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Imię:</span>
-                        <span class="detail-value">${doctor.firstName}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Nazwisko:</span>
-                        <span class="detail-value">${doctor.lastName}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Specjalizacja:</span>
-                        <span class="detail-value">${doctor.specialization}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Ulica:</span>
-                        <span class="detail-value">${doctor.address.street}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Miasto:</span>
-                        <span class="detail-value">${doctor.address.city}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Kod pocztowy:</span>
-                        <span class="detail-value">${doctor.address.zipCode}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Dyżury</span>
-                    </div>
-                `;
-
-                if(schedules.length<1){
-                    detailsHtml+=`
-                    <div class="detail-row">
-                        <span class="detail-value">Brak obecnych dyżurów</span>
-                    </div>
-                    `;
-                }else{
-                    schedules.forEach(schedule => {
-                        detailsHtml+=`
-                        <div class="detail-row">
-                            <span class="detail-label">Gabinet ${schedule.office.roomNumber}</span>
-                            <span class="detail-value">${schedule.startTime} - ${schedule.endTime}</span>
-                            </div>
-                            `;
-                        })
-                        
-                }
-
-
-          document.getElementById("doctorDetails").innerHTML = detailsHtml;
-          document.getElementById("detailModal").style.display = "block";
-          document.body.classList.add("modal-open");
-        } catch (error) {
-          showAlert("Błąd podczas pobierania szczegółów lekarza", "error");
-        }
-      }
-
       function openAddModal() {
-        document.getElementById("addDoctorForm").reset();
+        selectedDoctorId = null;
+        selectedOfficeId = null;
+        document.getElementById("startTime").value = "08:00";
+        document.getElementById("endTime").value = "16:00";
+        goToStep1();
         const modal = document.getElementById("addModal");
         modal.style.display = "block";
         modal.scrollTop = 0;
@@ -573,9 +565,168 @@
         document.body.classList.remove("modal-open");
       }
 
-      function closeDetailModal() {
-        document.getElementById("detailModal").style.display = "none";
-        document.body.classList.remove("modal-open");
+      function goToStep1() {
+        document.getElementById("step1").classList.add("active");
+        document.getElementById("step2").classList.remove("active");
+        document.getElementById("step1Indicator").classList.add("active");
+        document.getElementById("step2Indicator").classList.remove("active");
+      }
+
+      async function goToStep2() {
+        const startTime = document.getElementById("startTime").value;
+        const endTime = document.getElementById("endTime").value;
+
+        if (!startTime || !endTime) {
+          showAlert("Wybierz godziny dyżuru", "error");
+          return;
+        }
+
+        if (startTime >= endTime) {
+          showAlert("Godzina rozpoczęcia musi być wcześniejsza niż zakończenia", "error");
+          return;
+        }
+
+        document.getElementById("step1").classList.remove("active");
+        document.getElementById("step2").classList.add("active");
+        document.getElementById("step1Indicator").classList.remove("active");
+        document.getElementById("step2Indicator").classList.add("active");
+
+        selectedDoctorId = null;
+        selectedOfficeId = null;
+        updateSaveButton();
+
+        await loadFreeDoctors(startTime, endTime);
+        await loadFreeOffices(startTime, endTime);
+      }
+
+      async function loadFreeDoctors(startTime, endTime) {
+        const container = document.getElementById("doctorsList");
+        container.innerHTML = '<div class="empty-state">Ładowanie...</div>';
+
+        try {
+          const response = await fetch(
+            `${API_URL}/schedules/doctors?startTime=${startTime}&endTime=${endTime}`
+          );
+          if (!response.ok) throw new Error("Błąd pobierania lekarzy");
+
+          const doctors = await response.json();
+
+          if (doctors.length === 0) {
+            container.innerHTML = '<div class="empty-state">Brak wolnych lekarzy w tym czasie</div>';
+            return;
+          }
+
+          let html = "";
+          doctors.forEach((doctor) => {
+            html += `
+              <div class="selection-item" data-id="${doctor.id}" onclick="selectDoctor(${doctor.id}, this)">
+                ${doctor.firstName} ${doctor.lastName} - ${doctor.specialization}
+              </div>
+            `;
+          });
+          container.innerHTML = html;
+        } catch (error) {
+          container.innerHTML = '<div class="empty-state">Błąd ładowania lekarzy</div>';
+        }
+      }
+
+      async function loadFreeOffices(startTime, endTime) {
+        const container = document.getElementById("officesList");
+        container.innerHTML = '<div class="empty-state">Ładowanie...</div>';
+
+        try {
+          const response = await fetch(
+            `${API_URL}/schedules/offices?startTime=${startTime}&endTime=${endTime}`
+          );
+          if (!response.ok) throw new Error("Błąd pobierania gabinetów");
+
+          const offices = await response.json();
+
+          if (offices.length === 0) {
+            container.innerHTML = '<div class="empty-state">Brak wolnych gabinetów w tym czasie</div>';
+            return;
+          }
+
+          let html = "";
+          offices.forEach((office) => {
+            html += `
+              <div class="selection-item" data-id="${office.id}" onclick="selectOffice(${office.id}, this)">
+                Gabinet nr ${office.roomNumber}
+              </div>
+            `;
+          });
+          container.innerHTML = html;
+        } catch (error) {
+          container.innerHTML = '<div class="empty-state">Błąd ładowania gabinetów</div>';
+        }
+      }
+
+      function selectDoctor(id, element) {
+        document.querySelectorAll("#doctorsList .selection-item").forEach((el) => {
+          el.classList.remove("selected");
+        });
+        element.classList.add("selected");
+        selectedDoctorId = id;
+        updateSaveButton();
+      }
+
+      function selectOffice(id, element) {
+        document.querySelectorAll("#officesList .selection-item").forEach((el) => {
+          el.classList.remove("selected");
+        });
+        element.classList.add("selected");
+        selectedOfficeId = id;
+        updateSaveButton();
+      }
+
+      function updateSaveButton() {
+        const btn = document.getElementById("saveScheduleBtn");
+        btn.disabled = !(selectedDoctorId && selectedOfficeId);
+      }
+
+      async function saveSchedule() {
+        const startTime = document.getElementById("startTime").value + ":00";
+        const endTime = document.getElementById("endTime").value + ":00";
+
+        const schedule = {
+          doctorId: selectedDoctorId,
+          officeId: selectedOfficeId,
+          startTime: startTime,
+          endTime: endTime,
+        };
+
+        try {
+          const response = await fetch(`${API_URL}/schedules/add`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(schedule),
+          });
+
+          if (!response.ok) {
+            if (response.status === 400) {
+              throw new Error("Konflikt godzin lub dyżur za krótki");
+            } else if (response.status === 404) {
+              throw new Error("Nie znaleziono lekarza lub gabinetu");
+            }
+            throw new Error("Błąd dodawania dyżuru");
+          }
+
+          closeAddModal();
+          showAlert("Dyżur został pomyślnie dodany!", "success");
+          loadSchedules();
+        } catch (error) {
+          showAlert(error.message, "error");
+        }
+      }
+
+      function confirmDelete(id) {
+        document.getElementById("deleteMessage").textContent = 
+          `Czy na pewno chcesz usunąć dyżur o ID: ${id}?`;
+        document.getElementById("confirmDeleteBtn").onclick = () => deleteSchedule(id);
+        document.getElementById("deleteModal").style.display = "block";
+        document.body.classList.add("modal-open");
       }
 
       function closeDeleteModal() {
@@ -583,79 +734,24 @@
         document.body.classList.remove("modal-open");
       }
 
-      async function addDoctor(event) {
-        event.preventDefault();
-
-        const doctor = {
-          firstName: document.getElementById("firstName").value,
-          lastName: document.getElementById("lastName").value,
-          PESEL: document.getElementById("pesel").value,
-          specialization: document.getElementById("specialization").value,
-          street: document.getElementById("street").value,
-          city: document.getElementById("city").value,
-          zipcode: document.getElementById("zipcode").value,
-        };
-
+      async function deleteSchedule(id) {
         try {
-          const response = await fetch(`${API_URL}/doctors/add`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(doctor),
-          });
-
-          if (!response.ok) throw new Error("Błąd dodawania lekarza");
-
-          closeAddModal();
-          showAlert("Lekarz został pomyślnie dodany!", "success");
-          loadDoctors();
-        } catch (error) {
-          showAlert("Błąd podczas dodawania lekarza", "error");
-        }
-      }
-
-      function confirmDelete(id, name) {
-        document.getElementById(
-          "deleteMessage"
-        ).textContent = `Czy na pewno chcesz usunąć lekarza: ${name}?`;
-        document.getElementById("confirmDeleteBtn").onclick = () =>
-          deleteDoctor(id);
-        document.getElementById("deleteModal").style.display = "block";
-        document.body.classList.add("modal-open");
-      }
-
-      async function deleteDoctor(id) {
-        try {
-          const response = await fetch(`${API_URL}/doctors/${id}`, {
+          const response = await fetch(`${API_URL}/schedules/${id}`, {
             method: "DELETE",
           });
 
           if (!response.ok) {
-            if(response.status == 403) throw new Error("Błąd usuwania lekarza - lekarz przypisany do dyżuru");
-            else throw new Error("Błąd usuwania lekarza");
+            if (response.status === 404) {
+              throw new Error("Dyżur nie został znaleziony");
+            }
+            throw new Error("Błąd usuwania dyżuru");
           }
 
           closeDeleteModal();
-          showAlert("Lekarz został pomyślnie usunięty!", "success");
-          loadDoctors();
+          showAlert("Dyżur został pomyślnie usunięty!", "success");
+          loadSchedules();
         } catch (error) {
           showAlert(error.message, "error");
-        }
-      }
-
-      async function initDatabase() {
-        try {
-          const response = await fetch(`${API_URL}/init`, {
-            method: "POST",
-          });
-
-          if (!response.ok) throw new Error("Błąd inicjalizacji bazy");
-
-          showAlert("Baza danych została zainicjalizowana!", "success");
-          loadDoctors();
-        } catch (error) {
-          showAlert("Błąd podczas inicjalizacji bazy danych", "error");
         }
       }
 
