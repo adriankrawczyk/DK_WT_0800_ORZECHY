@@ -1,9 +1,15 @@
 package com.example.nfz.service;
 
 import com.example.nfz.model.Specialization;
-import com.example.nfz.util.*;
 import com.example.nfz.model.Doctor;
 import com.example.nfz.repository.DoctorRepository;
+import com.example.nfz.util.dto.DetailedDoctorDTO;
+import com.example.nfz.util.dto.DetailedOfficeDTO;
+import com.example.nfz.util.dto.DoctorDTO;
+import com.example.nfz.util.dto.FormDoctorDTO;
+import com.example.nfz.util.exceptions.DoctorNotFoundException;
+import com.example.nfz.util.exceptions.IsBeingScheduledException;
+import com.example.nfz.util.exceptions.SpecializationNotFoundException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +70,7 @@ public class DoctorService {
 
     /**
      * Returns a doctor by its private identifier
-     * converted to {@link DoctorDTO}
+     * converted to {@link DetailedOfficeDTO}
      *
      * @param id unique doctor id
      * @return found {@link Doctor} mapped to {@link DoctorDTO}
@@ -79,9 +85,11 @@ public class DoctorService {
      *
      * @param id unique doctor id
      * @throws DoctorNotFoundException if no doctor exists with given id
+     * @throws IsBeingScheduledException if is being scheduled
      */
-    public void deleteDoctorById(int id) throws DoctorNotFoundException {
+    public void deleteDoctorById(int id) throws DoctorNotFoundException, IsBeingScheduledException {
         Doctor doctor = getDoctorById(id);
+        if(!doctor.getSchedules().isEmpty()) throw new IsBeingScheduledException();
         doctorRepository.delete(doctor);
     }
 

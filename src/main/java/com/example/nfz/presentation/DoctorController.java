@@ -1,10 +1,15 @@
 package com.example.nfz.presentation;
 
-import com.example.nfz.repository.DoctorRepository;
 import com.example.nfz.service.TestService;
 import com.example.nfz.util.*;
 import com.example.nfz.model.Doctor;
 import com.example.nfz.service.DoctorService;
+import com.example.nfz.util.dto.DetailedDoctorDTO;
+import com.example.nfz.util.dto.DoctorDTO;
+import com.example.nfz.util.dto.FormDoctorDTO;
+import com.example.nfz.util.exceptions.DoctorNotFoundException;
+import com.example.nfz.util.exceptions.IsBeingScheduledException;
+import com.example.nfz.util.exceptions.SpecializationNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,7 +23,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(path = "doctors")
@@ -84,6 +88,7 @@ public class DoctorController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "doctor not found"),
+            @ApiResponse(responseCode = "403", description = "doctor is being scheduled"),
             @ApiResponse(responseCode = "200", description = "Ok",
                     content ={
                         @Content(mediaType = "application/json",
@@ -99,7 +104,9 @@ public class DoctorController {
                     new InfoApiResponse("doctor has been deleted")
             );
         }catch(DoctorNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "doctor not found");
+        } catch (IsBeingScheduledException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "doctor is being scheduled");
         }
     }
 

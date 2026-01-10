@@ -38,11 +38,11 @@
    gradlew.bat bootRun
    ```
 
-3. **Otwórz przeglądarkę** i przejdź pod adres:
+3. **Otwórz przeglądarkę** i przejdź pod jeden z adresów:
 
-   ```
-   http://localhost:8080
-   ```
+   - **Lekarze:** `http://localhost:8080/index.html` lub `http://localhost:8080/test.html`
+   - **Gabinety:** `http://localhost:8080/offices.html`
+   - **Dyżury:** `http://localhost:8080/schedules.html`
 
 4. Interfejs użytkownika powinien się załadować automatycznie.
 
