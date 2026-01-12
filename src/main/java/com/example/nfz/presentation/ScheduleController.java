@@ -73,7 +73,7 @@ public class ScheduleController {
             @ApiResponse(responseCode = "400", description = "schedule collides with other schedules or opening hours or is too short"),
             @ApiResponse(responseCode = "404", description = "doctor or office not found")
     })
-    public DetailedScheduleDTO sddSchedule(@RequestBody FormScheduleDTO schedule) {
+    public DetailedScheduleDTO addSchedule(@RequestBody FormScheduleDTO schedule) {
         try {
             return scheduleService.saveSchedule(schedule);
         } catch (OfficeNotFoundException e) {

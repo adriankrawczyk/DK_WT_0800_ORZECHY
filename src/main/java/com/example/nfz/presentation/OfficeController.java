@@ -49,7 +49,7 @@ public class OfficeController {
                             )
                     })
     })
-    public List<OfficeDTO> getOffices() {
+public List<OfficeDTO> getOffices() {
         return officeService.getOfficeDTOs();
     }
 
