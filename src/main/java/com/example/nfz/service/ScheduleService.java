@@ -141,7 +141,7 @@ public class ScheduleService {
      * @throws ImpossibleScheduleException if schedule collides with any other schedule or opening hours
      */
     @Transactional
-    public Schedule saveSchedule(FormScheduleDTO formScheduleDTO) throws DoctorNotFoundException, OfficeNotFoundException, ImpossibleScheduleException {
+    public DetailedScheduleDTO saveSchedule(FormScheduleDTO formScheduleDTO) throws DoctorNotFoundException, OfficeNotFoundException, ImpossibleScheduleException {
         Doctor requestDoctor = doctorRepository.findById(formScheduleDTO.doctorId())
                 .orElseThrow(DoctorNotFoundException::new);
         Office requestOffice = officeRepository.findById(formScheduleDTO.officeId())
@@ -184,7 +184,7 @@ public class ScheduleService {
         requestDoctor.getSchedules().add(newSchedule);
         doctorRepository.save(requestDoctor);
 
-        return newSchedule;
+        return new DetailedScheduleDTO(newSchedule);
     }
 
     /**

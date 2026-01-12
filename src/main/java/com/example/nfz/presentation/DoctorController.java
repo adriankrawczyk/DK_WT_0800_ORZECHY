@@ -2,7 +2,6 @@ package com.example.nfz.presentation;
 
 import com.example.nfz.service.TestService;
 import com.example.nfz.util.*;
-import com.example.nfz.model.Doctor;
 import com.example.nfz.service.DoctorService;
 import com.example.nfz.util.dto.DetailedDoctorDTO;
 import com.example.nfz.util.dto.DoctorDTO;
@@ -135,19 +134,19 @@ public class DoctorController {
     @Operation(
             summary = "adds a doctor to the database",
             description = "creates and adds a doctor to the database, " +
-                    "returns created Doctor class object"
+                    "returns created Doctor class object DTO"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok",
                     content ={
                             @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Doctor.class)
+                                    schema = @Schema(implementation = DetailedDoctorDTO.class)
                             )
                     }
             ),
             @ApiResponse(responseCode = "404", description = "specialization not found"),
     })
-    public Doctor addDoctor(@RequestBody FormDoctorDTO doctor) {
+    public DetailedDoctorDTO addDoctor(@RequestBody FormDoctorDTO doctor) {
         try {
             return doctorService.saveDoctor(doctor);
         } catch (SpecializationNotFoundException e) {

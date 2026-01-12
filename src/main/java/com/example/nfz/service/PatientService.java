@@ -90,9 +90,9 @@ public class PatientService {
      * @param patient form for adding a patient
      * @return created {@link Patient}
      */
-    public Patient savePatient(FormPatientDTO patient){
-        return patientRepository.save(new Patient(patient.firstName(), patient.lastName(),
-                patient.PESEL(), patient.street(), patient.city(), patient.zipCode()));
+    public DetailedPatientDTO savePatient(FormPatientDTO patient){
+        return new DetailedPatientDTO( patientRepository.save(new Patient(patient.firstName(), patient.lastName(),
+                patient.PESEL(), patient.street(), patient.city(), patient.zipCode())));
     }
 
 }

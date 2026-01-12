@@ -1,14 +1,10 @@
 package com.example.nfz.presentation;
 
-import com.example.nfz.model.Office;
-import com.example.nfz.model.Patient;
+
 import com.example.nfz.repository.PatientRepository;
 import com.example.nfz.service.PatientService;
 import com.example.nfz.util.InfoApiResponse;
 import com.example.nfz.util.dto.*;
-import com.example.nfz.util.exceptions.IsBeingScheduledException;
-import com.example.nfz.util.exceptions.OfficeAlreadyExistsException;
-import com.example.nfz.util.exceptions.OfficeNotFoundException;
 import com.example.nfz.util.exceptions.PatientNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -27,11 +23,9 @@ import java.util.List;
 @RequestMapping(path = "patients")
 public class PatientController {
 
-    private final PatientRepository patientRepository;
     private final PatientService patientService;
 
-    public PatientController(PatientRepository patientRepository, PatientService patientService) {
-        this.patientRepository = patientRepository;
+    public PatientController( PatientService patientService) {
         this.patientService = patientService;
     }
 
@@ -116,12 +110,12 @@ public class PatientController {
             @ApiResponse(responseCode = "200", description = "Ok",
                     content ={
                             @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Patient.class)
+                                    schema = @Schema(implementation = DetailedPatientDTO.class)
                             )
                     }
             ),
     })
-    public Patient addPatient(@RequestBody FormPatientDTO patient) {
+    public DetailedPatientDTO addPatient(@RequestBody FormPatientDTO patient) {
             return patientService.savePatient(patient);
     }
 

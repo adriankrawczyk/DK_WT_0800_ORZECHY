@@ -1,6 +1,5 @@
 package com.example.nfz.presentation;
 
-import com.example.nfz.model.Office;
 import com.example.nfz.service.OfficeService;
 import com.example.nfz.service.TestService;
 import com.example.nfz.util.*;
@@ -118,13 +117,13 @@ public class OfficeController {
             @ApiResponse(responseCode = "200", description = "Ok",
                     content ={
                             @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Office.class)
+                                    schema = @Schema(implementation = OfficeDTO.class)
                             )
                     }
             ),
             @ApiResponse(responseCode = "409", description = "office with this room number already exists"),
     })
-    public Office addOffice(@RequestBody FormOfficeDTO office) {
+    public OfficeDTO addOffice(@RequestBody FormOfficeDTO office) {
         try {
             return officeService.saveOffice(office);
         } catch (OfficeAlreadyExistsException e) {

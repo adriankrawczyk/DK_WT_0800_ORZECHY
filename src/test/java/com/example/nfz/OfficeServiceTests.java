@@ -40,7 +40,7 @@ public class OfficeServiceTests {
 
     Office testOffice = new Office(101);
     Office testOffice2 = new Office(202);
-
+    OfficeDTO testOfficeDTO = new OfficeDTO(testOffice);
     FormOfficeDTO testOfficeForm = new FormOfficeDTO(101);
 
     @BeforeEach
@@ -51,8 +51,8 @@ public class OfficeServiceTests {
     public void saveOfficeTest() throws OfficeAlreadyExistsException {
         when(officeRepository.save(any(Office.class))).thenReturn(testOffice);
 
-        Office savedOffice = officeService.saveOffice(testOfficeForm);
-        Assertions.assertEquals(testOffice, savedOffice);
+        OfficeDTO savedOffice = officeService.saveOffice(testOfficeForm);
+        Assertions.assertEquals(testOfficeDTO, savedOffice);
         verify(officeRepository).save(any(Office.class));
     }
 
