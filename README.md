@@ -9,8 +9,8 @@
     - [Dodawanie lekarza](#2-dodawanie-lekarza)
     - [Wyświetlanie szczegółów lekarza](#3-wyświetlanie-szczegółów-lekarza)
     - [Usuwanie lekarza](#4-usuwanie-lekarza)
-    - [Inicjalizacja bazy danych](#5-inicjalizacja-bazy-danych)
-    - [Odświeżanie listy](#6-odświeżanie-listy)
+    - [Inicjalizacja bazy danych](#12-inicjalizacja-bazy-danych)
+    - [Odświeżanie listy](#13-odświeżanie-listy)
 4. [Diagramy UML](#diagramy-uml)
 
 ---
