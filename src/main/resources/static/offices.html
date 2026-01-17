@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>System Zarządzania Lekarzami NFZ</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        height: 100%;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f5f5;
+        padding: 20px;
+        min-height: 100%;
+      }
+
+      .container {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+      }
+
+      header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2em;
+        margin-bottom: 5px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 12px 24px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .btn-primary {
+        background: #667eea;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #5a6fd6;
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c82333;
+      }
+
+      .btn-success {
+        background: #28a745;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #218838;
+      }
+
+      .btn-info {
+        background: #17a2b8;
+        color: white;
+      }
+
+      .btn-info:hover {
+        background: #138496;
+      }
+
+      .card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .card h2 {
+        color: #333;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #667eea;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      th:first-child,
+      td:first-child {
+        width: 60px;
+      }
+
+      th:last-child,
+      td:last-child {
+        width: 200px;
+      }
+
+      th {
+        background: #667eea;
+        color: white;
+      }
+
+      tr:hover {
+        background-color: #f8f9fa;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        overflow-y: scroll;
+      }
+
+      body.modal-open {
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .modal-content {
+        background-color: white;
+        margin: 20px auto;
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        position: relative;
+        margin-bottom: 50px;
+      }
+
+      .modal-content h2 {
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      .close {
+        position: absolute;
+        right: 20px;
+        top: 15px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #aaa;
+      }
+
+      .close:hover {
+        color: #333;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .alert {
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        display: none;
+      }
+
+      .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .alert-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .detail-row {
+        display: flex;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .detail-label {
+        font-weight: bold;
+        width: 150px;
+        color: #666;
+      }
+
+      .detail-value {
+        color: #333;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #666;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 5px;
+      }
+
+      .action-buttons button {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>System Zarządzania Lekarzami NFZ</h1>
+        <p>Aplikacja do zarządzania bazą danych lekarzy</p>
+      </header>
+
+      <div id="alert" class="alert"></div>
+
+      <div class="actions">
+        <button class="btn-primary" onclick="openAddModal()">
+          Dodaj Gabinet
+        </button>
+        <button class="btn-secondary" onclick="loadOffices()">
+          Odśwież Listę
+        </button>
+        <button class="btn-info" onclick="initDatabase()">
+          Inicjalizuj Bazę Danych
+        </button>
+        <button class="btn-info" onclick="window.location.href='test.html'">
+          Przejdź do lekarzy
+        </button>
+        <button class="btn-info" onclick="window.location.href='schedules.html'">
+          Przejdź do dyżurów
+        </button>
+      </div>
+
+      <div class="card">
+        <h2>Lista Gabinetów</h2>
+        <div id="doctorsList">
+          <div class="empty-state">Ładowanie danych...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Dodawania Lekarza -->
+    <div id="addModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeAddModal()">&times;</span>
+        <h2>Dodaj Nowy Gabinet</h2>
+        <form id="addDoctorForm" onsubmit="addDoctor(event)">
+          <div class="form-group">
+            <label for="roomNumber">Numer Pokoju:</label>
+            <input type="number" id="roomNumber" required placeholder="np. 4" />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-success">Dodaj Gabinet</button>
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="closeAddModal()"
+            >
+              Anuluj
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Szczegółów Lekarza -->
+    <div id="detailModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeDetailModal()">&times;</span>
+        <h2>Szczegóły Gabinetu</h2>
+        <div id="doctorDetails"></div>
+        <div class="form-actions" style="margin-top: 20px">
+          <button class="btn-secondary" onclick="closeDetailModal()">
+            Zamknij
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Potwierdzenia Usunięcia -->
+    <div id="deleteModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeDeleteModal()">&times;</span>
+        <h2>Potwierdzenie Usunięcia</h2>
+        <p id="deleteMessage" style="margin: 20px 0">
+          Czy na pewno chcesz usunąć tego lekarza?
+        </p>
+        <div class="form-actions">
+          <button class="btn-danger" id="confirmDeleteBtn">Usuń</button>
+          <button class="btn-secondary" onclick="closeDeleteModal()">
+            Anuluj
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_URL = "http://localhost:8080";
+
+      document.addEventListener("DOMContentLoaded", loadOffices);
+
+      function showAlert(message, type) {
+        const alert = document.getElementById("alert");
+        alert.textContent = message;
+        alert.className = `alert alert-${type}`;
+        alert.style.display = "block";
+        setTimeout(() => {
+          alert.style.display = "none";
+        }, 3000);
+      }
+
+      async function loadOffices() {
+        try {
+          const response = await fetch(`${API_URL}/offices`);
+          if (!response.ok) throw new Error("Błąd pobierania danych");
+
+          const offices = await response.json();
+          displayOffices(offices);
+        } catch (error) {
+          document.getElementById("doctorsList").innerHTML =
+            '<div class="empty-state">Błąd połączenia z serwerem. Upewnij się, że backend jest uruchomiony.</div>';
+        }
+      }
+
+      function displayOffices(offices) {
+        const container = document.getElementById("doctorsList");
+
+        if (offices.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state">Brak lekarzy w bazie danych. Kliknij "Inicjalizuj Bazę Danych" lub "Dodaj Lekarza".</div>';
+          return;
+        }
+
+        let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Numer Pokoju</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+        offices.forEach((office) => {
+          html += `
+                    <tr>
+                        <td>${office.id}</td>
+                        <td>${office.roomNumber}</td>
+                        <td class="action-buttons">
+                            <button class="btn-info" onclick="showOfficeDetails(${office.id})">Szczegóły</button>
+                            <button class="btn-danger" onclick="confirmDelete(${office.id}, '${office.roomNumber}')">Usuń</button>
+                        </td>
+                    </tr>
+                `;
+        });
+
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      }
+
+      async function showOfficeDetails(id) {
+        try {
+            const response = await fetch(`${API_URL}/offices/${id}`);
+            if (!response.ok) throw new Error("Nie znaleziono gabinetu");
+
+            const office = await response.json();
+
+            const schedules = office.schedules;
+
+            console.log(schedules)
+
+            let detailsHtml = `
+                        <div class="detail-row">
+                            <span class="detail-label">ID:</span>
+                            <span class="detail-value">${office.id}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Imię:</span>
+                            <span class="detail-value">${office.roomNumber}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Dyżury</span>
+                        </div>
+                    `;
+
+                    if(schedules.length<1){
+                        detailsHtml+=`
+                        <div class="detail-row">
+                            <span class="detail-value">Brak obecnych dyżurów</span>
+                        </div>
+                        `;
+                    }else{
+                        schedules.forEach(schedule => {
+                            detailsHtml+=`
+                            <div class="detail-row">
+                                <span class="detail-label">${schedule.doctor.firstName} ${schedule.doctor.lastName} \t${schedule.doctor.specialization}</span>
+                                <span class="detail-value">${schedule.startTime} - ${schedule.endTime}</span>
+                                </div>
+                                `;
+                            })
+                            
+                    }
+
+
+            document.getElementById("doctorDetails").innerHTML = detailsHtml;
+            document.getElementById("detailModal").style.display = "block";
+            document.body.classList.add("modal-open");
+            } catch (error) {
+            showAlert("Błąd podczas pobierania szczegółów lekarza", "error");
+            }
+      }
+
+      function openAddModal() {
+        document.getElementById("addDoctorForm").reset();
+        const modal = document.getElementById("addModal");
+        modal.style.display = "block";
+        modal.scrollTop = 0;
+        document.body.classList.add("modal-open");
+      }
+
+      function closeAddModal() {
+        document.getElementById("addModal").style.display = "none";
+        document.body.classList.remove("modal-open");
+      }
+
+      function closeDetailModal() {
+        document.getElementById("detailModal").style.display = "none";
+        document.body.classList.remove("modal-open");
+      }
+
+      function closeDeleteModal() {
+        document.getElementById("deleteModal").style.display = "none";
+        document.body.classList.remove("modal-open");
+      }
+
+      async function addDoctor(event) {
+        event.preventDefault();
+
+        const office = {
+          roomNumber: document.getElementById("roomNumber").value,
+        };
+
+        console.log(office)
+
+        try {
+          const response = await fetch(`${API_URL}/offices/add`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(office),
+          });
+
+          if (!response.ok) throw new Error("Błąd dodawania gabinetu");
+
+          closeAddModal();
+          showAlert("Gabinet został pomyślnie dodany!", "success");
+          loadOffices();
+        } catch (error) {
+          showAlert("Błąd podczas dodawania gabinetu", "error");
+        }
+      }
+
+      function confirmDelete(id, name) {
+        document.getElementById(
+          "deleteMessage"
+        ).textContent = `Czy na pewno chcesz usunąć gabinet: ${name}?`;
+        document.getElementById("confirmDeleteBtn").onclick = () =>
+          deleteOffice(id);
+        document.getElementById("deleteModal").style.display = "block";
+        document.body.classList.add("modal-open");
+      }
+
+      async function deleteOffice(id) {
+        try {
+          const response = await fetch(`${API_URL}/offices/${id}`, {
+            method: "DELETE",
+          });
+
+          if (!response.ok) {
+            if(response.status == 403) throw new Error("Błąd usuwania gabinetu - gabinet przypisany do dyżuru");
+            else throw new Error("Błąd usuwania lekarza");
+          }
+
+          closeDeleteModal();
+          showAlert("Lekarz został pomyślnie usunięty!", "success");
+          loadOffices();
+        } catch (error) {
+          showAlert(error.message, "error");
+        }
+      }
+
+      async function initDatabase() {
+        try {
+          const response = await fetch(`${API_URL}/init`, {
+            method: "POST",
+          });
+
+          if (!response.ok) throw new Error("Błąd inicjalizacji bazy");
+
+          showAlert("Baza danych została zainicjalizowana!", "success");
+          loadOffices();
+        } catch (error) {
+          showAlert("Błąd podczas inicjalizacji bazy danych", "error");
+        }
+      }
+
+      window.onclick = function (event) {
+        if (event.target.classList.contains("modal")) {
+          event.target.style.display = "none";
+          document.body.classList.remove("modal-open");
+        }
+      };
+    </script>
+  </body>
+</html>

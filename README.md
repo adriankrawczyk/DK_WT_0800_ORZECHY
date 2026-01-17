@@ -9,8 +9,8 @@
     - [Dodawanie lekarza](#2-dodawanie-lekarza)
     - [Wyświetlanie szczegółów lekarza](#3-wyświetlanie-szczegółów-lekarza)
     - [Usuwanie lekarza](#4-usuwanie-lekarza)
-    - [Inicjalizacja bazy danych](#5-inicjalizacja-bazy-danych)
-    - [Odświeżanie listy](#6-odświeżanie-listy)
+    - [Inicjalizacja bazy danych](#12-inicjalizacja-bazy-danych)
+    - [Odświeżanie listy](#13-odświeżanie-listy)
 4. [Diagramy UML](#diagramy-uml)
 
 ---
@@ -38,11 +38,11 @@
    gradlew.bat bootRun
    ```
 
-3. **Otwórz przeglądarkę** i przejdź pod adres:
+3. **Otwórz przeglądarkę** i przejdź pod jeden z adresów:
 
-   ```
-   http://localhost:8080
-   ```
+   - **Lekarze:** `http://localhost:8080/index.html` lub `http://localhost:8080/test.html`
+   - **Gabinety:** `http://localhost:8080/offices.html`
+   - **Dyżury:** `http://localhost:8080/schedules.html`
 
 4. Interfejs użytkownika powinien się załadować automatycznie.
 
@@ -102,7 +102,7 @@ Po uruchomieniu aplikacji zobaczysz stronę główną z:
 
 ### 3. Wyświetlanie szczegółów lekarza
 
-**Opis:** Funkcja umożliwia wyświetlenie pełnych informacji o wybranym lekarzu, włącznie z danymi adresowymi.
+**Opis:** Funkcja umożliwia wyświetlenie pełnych informacji o wybranym lekarzu, włącznie z danymi adresowymi i dyżurami.
 
 **Jak użyć:**
 
@@ -131,12 +131,148 @@ Po uruchomieniu aplikacji zobaczysz stronę główną z:
 4. **Kliknij** `Usuń` aby potwierdzić usunięcie, lub `Anuluj` aby anulować
 
 5. **Rezultat:**
+   - Jeżeli lekarz jest przypisany do jakiegoś dyżuru, wyświetli się komunikat o błędzie
    - Wyświetli się zielony komunikat: "Lekarz został pomyślnie usunięty!"
    - Lekarz zniknie z listy
 
 ---
 
-### 5. Inicjalizacja bazy danych
+### 5. Przeglądanie listy gabinetów
+
+**Opis:** Lista wszystkich gabinetów w systemie wyświetla się automatycznie po załadowaniu strony.
+
+**Jak użyć:**
+
+- Lista gabinetów wyświetla się w tabeli na stronie gabinetów
+- Dla każdego gabinetu widoczne są: ID, numer pokoju oraz przyciski akcji
+
+---
+
+### 6. Dodawanie gabinetu
+
+**Opis:** Funkcja umożliwia dodanie nowego gabinetu do bazy danych.
+
+**Jak użyć:**
+
+1. **Kliknij przycisk** `Dodaj Gabinet` znajdujący się na górze strony
+
+2. **Wyświetli się formularz** z polem do wypełnienia
+
+3. **Wypełnij formularz** przykładowymi danymi:
+
+    - Numer Pokoju: `67`
+
+
+4. **Kliknij przycisk** `Dodaj Gabinet`
+
+5. **Rezultat:**
+    - Formularz zostanie zamknięty
+    - Jeżeli gabinet o danym numerze pokoju juz istnieje, wyświetli się komunikat o błedzie
+    - Wyświetli się zielony komunikat: "Gabinet został pomyślnie dodany!"
+    - Nowy gabinet pojawi się na liście
+
+---
+
+### 7. Wyświetlanie szczegółów lekarza
+
+**Opis:** Funkcja umożliwia wyświetlenie pełnych informacji o gabinecie lekarzu, włącznie z obowiązującymi dyżurami.
+
+**Jak użyć:**
+
+1. **Znajdź gabinet** na liście, którego szczegóły chcesz zobaczyć
+
+2. **Kliknij przycisk** `Szczegóły` przy wybranym gabinecie
+
+3. **Wyświetli się okno** ze szczegółowymi informacjami
+
+4. **Kliknij** `Zamknij` lub obszar poza oknem, aby zamknąć szczegóły
+
+---
+### 8. Usuwanie gabinetu
+
+**Opis:** Funkcja umożliwia usunięcie gabinetu z bazy danych.
+
+**Jak użyć:**
+
+1. **Znajdź gabinet** na liście, którego chcesz usunąć
+
+2. **Kliknij przycisk** `Usuń` przy wybranym gabinecie
+
+3. **Wyświetli się okno potwierdzenia**
+
+4. **Kliknij** `Usuń` aby potwierdzić usunięcie, lub `Anuluj` aby anulować
+
+5. **Rezultat:**
+    - Jeżeli gabinet jest przypisany do jakiegoś dyżuru, wyświetli się komunikat o błędzie
+    - Wyświetli się zielony komunikat: "Gabinet został pomyślnie usunięty!"
+    - Gabinet zniknie z listy
+
+---
+
+### 9. Przeglądanie listy dyżurów
+
+**Opis:** Lista wszystkich dyżurów w systemie wyświetla się automatycznie po załadowaniu strony.
+
+**Jak użyć:**
+
+- Lista dyżurów wyświetla się w tabeli na stronie dyżurów
+- Dla każdego dyżuru widoczne są: ID, ID lekarza, ID gabinetu, godziny dyżuru oraz przyciski akcji
+
+---
+
+### 10. Dodawanie dyżuru
+
+**Opis:** Funkcja umożliwia dodanie nowego dyżuru do bazy danych.
+
+**Jak użyć:**
+
+1. **Kliknij przycisk** `Dodaj Dyżur` znajdujący się na górze strony
+
+2. **Wyświetli się formularz** z polami do wypełnienia
+
+3. **Wypełnij formularz** przykładowymi danymi:
+
+    - Godzina rozpoczęcia: `11:30:00`
+    - Godzina zakończenia: `14:45:00`
+
+4. **Kliknij przycisk** `Dodaj - Szukaj Wolnych`
+
+5. **Pojawi się formularz** z listami dostepnych lekarzy i gabentów w tych godzinach
+
+6. **Wybierz lekarza i gabient** z list
+
+7. **Kliknij przycisk** `Zapisz dyżur`
+
+5. **Rezultat:**
+    - Formularz zostanie zamknięty
+    - Jeżeli dyżur konfliktuje się z godzinami otwarcia kliniki (7:00-18:00) lub będzie on za krótki (min. 1 godzina), wyświetli się komunikat o błędzie
+    - Jeżeli dyżur styka się czasowo z innym dyżurem, to jeżeli oba mają ten sam gabinet i lekarza, złączą się razem w nowy dłuższy dyżur (w tym przypadku długość dyżuru z formularza może byc mniejsza niż godzina)
+    - Wyświetli się zielony komunikat: "Dyżur został pomyślnie dodany!"
+    - Nowy dyżur pojawi się na liście
+---
+
+### 11. Usuwanie dyżuru
+
+**Opis:** Funkcja umożliwia usunięcie dyżuru z bazy danych.
+
+**Jak użyć:**
+
+1. **Znajdź dyżur** na liście, którego chcesz usunąć
+
+2. **Kliknij przycisk** `Usuń` przy wybranym dyżurze
+
+3. **Wyświetli się okno potwierdzenia**
+
+4. **Kliknij** `Usuń` aby potwierdzić usunięcie, lub `Anuluj` aby anulować
+
+5. **Rezultat:**
+    - Wyświetli się zielony komunikat: "Dyżur został pomyślnie usunięty!"
+    - Dyżur zniknie z listy
+
+---
+
+
+### 12. Inicjalizacja bazy danych
 
 **Opis:** Funkcja resetuje bazę danych do stanu początkowego z predefiniowaną listą lekarzy. Przydatne do testowania lub przywrócenia danych demonstracyjnych.
 
@@ -154,6 +290,8 @@ Po uruchomieniu aplikacji zobaczysz stronę główną z:
      - Remy Hadley (Neurologia)
      - James Wilson (Onkologia)
      - Lisa Cudy (Urologia)
+   - Trzema gabinetami: numer 1, 2 i 3
+   - Jednym dyżurem: Gregory House w gabinecie nr 1 w godzinach 11:30 - 12:30
    - Wyświetli się komunikat: "Baza danych została zainicjalizowana!"
    - Lista lekarzy zostanie odświeżona
 
@@ -161,15 +299,15 @@ Po uruchomieniu aplikacji zobaczysz stronę główną z:
 
 ---
 
-### 6. Odświeżanie listy
+### 13. Odświeżanie listy
 
-**Opis:** Funkcja pozwala na ręczne odświeżenie listy lekarzy (przydatne gdy dane mogły zostać zmienione z innego źródła).
+**Opis:** Funkcja pozwala na ręczne odświeżenie list (przydatne gdy dane mogły zostać zmienione z innego źródła).
 
 **Jak użyć:**
 
 1. **Kliknij przycisk** `Odśwież Listę` znajdujący się na górze strony
 
-2. **Rezultat:** Lista lekarzy zostanie ponownie pobrana z serwera i wyświetlona
+2. **Rezultat:** Lista lekarzy, gabientów lub dyżurów zostanie ponownie pobrana z serwera i wyświetlona
 
 ---
 
