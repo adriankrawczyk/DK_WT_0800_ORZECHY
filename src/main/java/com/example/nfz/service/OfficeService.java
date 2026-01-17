@@ -92,12 +92,12 @@ public class OfficeService {
      * Adds a new office to the database
      *
      * @param office form for adding an office
-     * @return created {@link Office}
+     * @return {@link OfficeDTO} of created {@link Office}
      * @throws OfficeAlreadyExistsException if there exists an office with this room number
      */
-    public Office saveOffice(FormOfficeDTO office) throws OfficeAlreadyExistsException {
+    public OfficeDTO saveOffice(FormOfficeDTO office) throws OfficeAlreadyExistsException {
         try{
-        return officeRepository.save(new Office(office.roomNumber()));
+        return new OfficeDTO(officeRepository.save(new Office(office.roomNumber())));
         } catch (DataIntegrityViolationException ex){
             throw new OfficeAlreadyExistsException();
         }

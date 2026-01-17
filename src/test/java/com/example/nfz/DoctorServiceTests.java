@@ -47,6 +47,8 @@ public class DoctorServiceTests {
     Doctor testDoctor = new Doctor("Ted","Bundy","1234567890",Specialization.CARDIOLOGY,"Sezamkowa",
             "Ameryka","12-345");
 
+    DetailedDoctorDTO testDoctorDTO = new DetailedDoctorDTO(testDoctor);
+
 
     FormDoctorDTO testDoctorForm = new FormDoctorDTO(testDoctor);
 
@@ -61,8 +63,8 @@ public class DoctorServiceTests {
 
         when(doctorRepository.save(any(Doctor.class))).thenReturn(testDoctor);
 
-        Doctor savedDoctor = doctorService.saveDoctor(testDoctorForm);
-        Assertions.assertEquals(testDoctor,savedDoctor);
+        DetailedDoctorDTO savedDoctor = doctorService.saveDoctor(testDoctorForm);
+        Assertions.assertEquals(testDoctorDTO,savedDoctor);
         verify(doctorRepository).save(any(Doctor.class));
     }
 

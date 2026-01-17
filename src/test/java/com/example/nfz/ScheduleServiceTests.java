@@ -121,10 +121,10 @@ class ScheduleServiceTests {
         when(officeRepository.findById(office.getId())).thenReturn(Optional.of(office));
         when(scheduleRepository.save(any())).thenAnswer(a -> a.getArgument(0));
 
-        Schedule result = scheduleService.saveSchedule(dto);
+        DetailedScheduleDTO result = scheduleService.saveSchedule(dto);
 
         assertNotNull(result);
-        assertEquals(start, result.getStartTime());
+        assertEquals(start, result.startTime());
         verify(scheduleRepository).save(any());
     }
 
@@ -179,10 +179,10 @@ class ScheduleServiceTests {
         when(officeRepository.findById(office.getId())).thenReturn(Optional.of(office));
         when(scheduleRepository.save(any())).thenAnswer(a -> a.getArgument(0));
 
-        Schedule result = scheduleService.saveSchedule(dto);
+        DetailedScheduleDTO result = scheduleService.saveSchedule(dto);
 
-        assertEquals(start, result.getStartTime());
-        assertEquals(LocalTime.of(12, 0), result.getEndTime());
+        assertEquals(start, result.startTime());
+        assertEquals(LocalTime.of(12, 0), result.endTime());
         verify(scheduleRepository).delete(existing);
     }
 

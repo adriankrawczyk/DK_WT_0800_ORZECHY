@@ -43,3 +43,6 @@ src/main/resources/application-local.yml
 *.DS_Store
 
 gradlew
+
+TODO.txt
+/nfz.trace.db

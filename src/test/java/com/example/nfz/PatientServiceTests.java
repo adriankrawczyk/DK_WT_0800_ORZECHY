@@ -104,10 +104,10 @@ public class PatientServiceTests {
         // zapisanie nowego pacjenta do bazy
         when(patientRepository.save(any(Patient.class))).thenReturn(testPatient);
 
-        Patient saved = patientService.savePatient(testPatientForm);
+        DetailedPatientDTO saved = patientService.savePatient(testPatientForm);
 
         Assertions.assertNotNull(saved);
-        Assertions.assertEquals("Jan", saved.getFirstName());
+        Assertions.assertEquals("Jan", saved.firstName());
         verify(patientRepository).save(any(Patient.class));
     }
 

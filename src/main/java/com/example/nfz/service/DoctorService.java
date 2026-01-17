@@ -97,14 +97,14 @@ public class DoctorService {
      * Adds a new doctor to the database
      *
      * @param doctor form for adding a doctor
-     * @return created {@link Doctor}
+     * @return {@link DetailedDoctorDTO} of created {@link Doctor}
      * @throws SpecializationNotFoundException if given specialization is not supported
      */
-    public Doctor saveDoctor(FormDoctorDTO doctor) throws SpecializationNotFoundException {
+    public DetailedDoctorDTO saveDoctor(FormDoctorDTO doctor) throws SpecializationNotFoundException {
         Specialization specialization = Specialization.getSpecialization(doctor.specialization());
 
-        return doctorRepository.save(new Doctor(doctor.firstName(),doctor.lastName(),
-                doctor.PESEL(),specialization,doctor.street(),doctor.city(),doctor.zipcode()));
+        return new DetailedDoctorDTO( doctorRepository.save(new Doctor(doctor.firstName(),doctor.lastName(),
+                doctor.PESEL(),specialization,doctor.street(),doctor.city(),doctor.zipcode())));
     }
 
 
