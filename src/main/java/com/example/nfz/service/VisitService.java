@@ -1,5 +1,6 @@
 package com.example.nfz.service;
 
+import com.example.nfz.model.Patient;
 import com.example.nfz.model.Schedule;
 import com.example.nfz.model.Specialization;
 import com.example.nfz.model.Visit;
@@ -8,11 +9,13 @@ import com.example.nfz.repository.PatientRepository;
 import com.example.nfz.repository.ScheduleRepository;
 import com.example.nfz.repository.VisitRepository;
 import com.example.nfz.util.dto.DoctorDTO;
+import com.example.nfz.util.dto.FormVisitDTO;
 import com.example.nfz.util.dto.SuggestionVisitDTO;
 import com.example.nfz.util.dto.VisitDTO;
-import com.example.nfz.util.exceptions.SpecializationNotFoundException;
-import com.example.nfz.util.exceptions.VisitNotFoundException;
+import com.example.nfz.util.exceptions.*;
+import jdk.jshell.SourceCodeAnalysis;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -45,9 +48,11 @@ public class VisitService {
 
     private List<LocalDate> getDatesRange(LocalDate start, LocalDate end){
         List<LocalDate> dates = new ArrayList<>();
-        dates.add(start);
+//        if(!start.isAfter(end) && start.getDayOfWeek()!= DayOfWeek.SATURDAY && start.getDayOfWeek()!= DayOfWeek.SUNDAY)
+            dates.add(start);
         LocalDate date = start.plusDays(1);
-        while(!date.isAfter(end) && date.getDayOfWeek()!= DayOfWeek.SATURDAY && date.getDayOfWeek()!= DayOfWeek.SUNDAY){
+        while(!date.isAfter(end) && date.getDayOfWeek()!= DayOfWeek.SATURDAY && date.getDayOfWeek()!= DayOfWeek.SUNDAY
+                && !date.isBefore(LocalDate.now())) {
             dates.add(date);
             date = date.plusDays(1);
         }
@@ -60,13 +65,15 @@ public class VisitService {
         for (Schedule schedule : schedules) {
             //we start visits always at a quadrant
             LocalTime startTime = findFirstQuadrant(schedule.getStartTime());
-            while(startTime.plusMinutes(visitDuration).isBefore(schedule.getEndTime())){
-
+            System.out.println(startTime);
+            while(!startTime.plusMinutes(visitDuration).isAfter(schedule.getEndTime())){
+                System.out.println(startTime);
                 for(LocalDate date : dates){
                     visits.add(new SuggestionVisitDTO(date,startTime,
-                                                        new DoctorDTO(schedule.getDoctor())));
-                    startTime = startTime.plusMinutes(visitDuration);
+                                                        new DoctorDTO(schedule.getDoctor()),
+                                                        schedule.getId()));
                 }
+                startTime = startTime.plusMinutes(visitDuration);
             }
         }
 
@@ -92,15 +99,35 @@ public class VisitService {
         return visitRepository.findById(id).orElseThrow(VisitNotFoundException::new);
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     * @throws VisitNotFoundException
+     */
     public VisitDTO getVisitDTOById(int id) throws VisitNotFoundException {
         return new VisitDTO(getVisitById(id));
     }
 
+    /**
+     *
+     * @param spec specialization
+     * @param startDate
+     * @param endDate
+     * @return list of avaliable visit suggestion
+     * @throws SpecializationNotFoundException if specialization not found
+     */
+    @Transactional
     public List<SuggestionVisitDTO> getAvaliableVisits(String spec, LocalDate startDate, LocalDate endDate) throws SpecializationNotFoundException {
 
         Specialization specialization = Specialization.getSpecialization(spec);
 
+        if(endDate.isBefore(startDate) || startDate.isBefore(LocalDate.now())){
+            return new ArrayList<>();
+        }
+
         List<LocalDate> dateRange = getDatesRange(startDate, endDate);
+        System.out.println("dateRange: " + dateRange);
 
         //find schedules with matching doctors
         List<Schedule> specializationSchedules = scheduleRepository.findAll().stream()
@@ -114,7 +141,46 @@ public class VisitService {
 
         //extract possible visits
 
+        List<SuggestionVisitDTO> suggestions = extractVisitSugetsions(specializationSchedules,dateRange);
+
         //remove colisions
+
+        for (Visit visit : possibleCollisonVisits) {
+            suggestions.removeIf(visit::collides);
+        }
+
+        return suggestions;
+    }
+
+    @Transactional
+    public VisitDTO saveVisit(FormVisitDTO formVisitDTO) throws PatientNotFoundException, ScheduleNotFoundException, VisitCollisionException, InvalidvisitExcteption {
+        Patient patient = patientRepository.findById(formVisitDTO.patientId()).orElseThrow(PatientNotFoundException::new);
+        Schedule schedule = scheduleRepository.findById(formVisitDTO.scheduleId()).orElseThrow(ScheduleNotFoundException::new);
+
+        Visit newVisit = new Visit(formVisitDTO.time(),
+                formVisitDTO.date(), schedule, patient);
+        //spawdz poprawnośc wizyty
+        if(!newVisit.valid()) throw new InvalidvisitExcteption();
+
+        //sprawdz czy koliduje z innymi wizytami
+        for(Visit patientVisit: patient.getVisits()){
+            if(patientVisit.collides(newVisit)) throw new VisitCollisionException();
+        }
+
+        for(Visit scheduleVisit: schedule.getVisits()){
+            if(scheduleVisit.collides(newVisit)) throw new VisitCollisionException();
+        }
+
+        patient.getVisits().add(newVisit);
+        patientRepository.save(patient);
+
+        schedule.getVisits().add(newVisit);
+        scheduleRepository.save(schedule);
+
+        visitRepository.save(newVisit);
+
+        return new VisitDTO(newVisit);
+
     }
 
 }
