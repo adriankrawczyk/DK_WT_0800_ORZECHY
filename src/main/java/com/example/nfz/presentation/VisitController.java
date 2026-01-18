@@ -122,4 +122,14 @@ public class VisitController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "visit not found");
         }
     }
+
+    @GetMapping("/patient/{id}")
+    public List<VisitDTO> getPatientVisits(@PathVariable String id) {
+        return visitService.getPatientVisits(Integer.parseInt(id));
+    }
+
+    @GetMapping("/schedule/{id}")
+    public List<VisitDTO> getScheduleVisits(@PathVariable String id) {
+        return visitService.getScheduleVisits(Integer.parseInt(id));
+    }
 }

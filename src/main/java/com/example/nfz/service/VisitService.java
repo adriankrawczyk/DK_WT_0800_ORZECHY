@@ -197,4 +197,16 @@ public class VisitService {
         visitRepository.delete(visit);
     }
 
+    public List<VisitDTO> getPatientVisits(int id) {
+        return visitRepository.findAllByPatient_Id(id).stream()
+                .map(VisitDTO::new)
+                .toList();
+    }
+
+    public List<VisitDTO> getScheduleVisits(int id) {
+        return visitRepository.findAllBySchedule_Id(id).stream()
+                .map(VisitDTO::new)
+                .toList();
+    }
+
 }
