@@ -48,7 +48,7 @@ public class VisitService {
 
     private List<LocalDate> getDatesRange(LocalDate start, LocalDate end){
         List<LocalDate> dates = new ArrayList<>();
-//        if(!start.isAfter(end) && start.getDayOfWeek()!= DayOfWeek.SATURDAY && start.getDayOfWeek()!= DayOfWeek.SUNDAY)
+        if(!start.isAfter(end) && start.getDayOfWeek()!= DayOfWeek.SATURDAY && start.getDayOfWeek()!= DayOfWeek.SUNDAY)
             dates.add(start);
         LocalDate date = start.plusDays(1);
         while(!date.isAfter(end) && date.getDayOfWeek()!= DayOfWeek.SATURDAY && date.getDayOfWeek()!= DayOfWeek.SUNDAY
