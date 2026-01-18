@@ -2,6 +2,7 @@ package com.example.nfz.presentation;
 
 import com.example.nfz.repository.VisitRepository;
 import com.example.nfz.service.VisitService;
+import com.example.nfz.util.InfoApiResponse;
 import com.example.nfz.util.dto.*;
 import com.example.nfz.util.exceptions.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -70,7 +72,7 @@ public class VisitController {
     }
 
 
-    @GetMapping("avaliable")
+    @GetMapping("/avaliable")
     @Operation(
             summary = "get all available visit suggestions",
             description = ""
@@ -109,5 +111,15 @@ public class VisitController {
         }
     }
 
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<InfoApiResponse> deleteVisit(@PathVariable String id) {
+        try{
+            visitService.deleteVisitById(Integer.parseInt(id));
+            return  ResponseEntity.ok(
+                    new InfoApiResponse("visit has been deleted")
+            );
+        }catch(VisitNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "visit not found");
+        }
+    }
 }

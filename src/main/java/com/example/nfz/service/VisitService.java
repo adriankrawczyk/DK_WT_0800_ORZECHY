@@ -152,6 +152,15 @@ public class VisitService {
         return suggestions;
     }
 
+    /**
+     *
+     * @param formVisitDTO
+     * @return
+     * @throws PatientNotFoundException
+     * @throws ScheduleNotFoundException
+     * @throws VisitCollisionException
+     * @throws InvalidvisitExcteption
+     */
     @Transactional
     public VisitDTO saveVisit(FormVisitDTO formVisitDTO) throws PatientNotFoundException, ScheduleNotFoundException, VisitCollisionException, InvalidvisitExcteption {
         Patient patient = patientRepository.findById(formVisitDTO.patientId()).orElseThrow(PatientNotFoundException::new);
@@ -181,6 +190,11 @@ public class VisitService {
 
         return new VisitDTO(newVisit);
 
+    }
+
+    public void deleteVisitById(int id) throws VisitNotFoundException {
+        Visit visit = visitRepository.findById(id).orElseThrow(VisitNotFoundException::new);
+        visitRepository.delete(visit);
     }
 
 }
