@@ -5,10 +5,7 @@ import com.example.nfz.service.ScheduleService;
 import com.example.nfz.service.TestService;
 import com.example.nfz.util.*;
 import com.example.nfz.util.dto.*;
-import com.example.nfz.util.exceptions.DoctorNotFoundException;
-import com.example.nfz.util.exceptions.ImpossibleScheduleException;
-import com.example.nfz.util.exceptions.OfficeNotFoundException;
-import com.example.nfz.util.exceptions.ScheduleNotFoundException;
+import com.example.nfz.util.exceptions.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -109,6 +106,8 @@ public class ScheduleController {
             );
         }catch(ScheduleNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "schedule not found");
+        } catch (VisitScheduledException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "scheduled visits exist");
         }
     }
 

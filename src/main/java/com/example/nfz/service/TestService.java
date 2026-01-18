@@ -102,7 +102,7 @@ public class TestService {
                                             office1,
                                             doctor1);
 
-        Visit visit = new  Visit(LocalTime.of(11,45),LocalDate.now(),schedule1,patient1);
+        Visit visit = new  Visit(LocalTime.of(11,45),LocalDate.now().withDayOfMonth(1),schedule1,patient1);
 
         schedule1.getVisits().add(visit);
         patient1.getVisits().add(visit);

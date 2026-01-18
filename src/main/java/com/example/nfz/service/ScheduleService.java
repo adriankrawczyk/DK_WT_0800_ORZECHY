@@ -6,16 +6,15 @@ import com.example.nfz.model.Schedule;
 import com.example.nfz.repository.DoctorRepository;
 import com.example.nfz.repository.OfficeRepository;
 import com.example.nfz.repository.ScheduleRepository;
+import com.example.nfz.repository.VisitRepository;
 import com.example.nfz.util.dto.*;
-import com.example.nfz.util.exceptions.DoctorNotFoundException;
-import com.example.nfz.util.exceptions.ImpossibleScheduleException;
-import com.example.nfz.util.exceptions.OfficeNotFoundException;
-import com.example.nfz.util.exceptions.ScheduleNotFoundException;
+import com.example.nfz.util.exceptions.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,15 +26,17 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final OfficeRepository officeRepository;
     private final DoctorRepository doctorRepository;
+    private final VisitRepository visitRepository;
 
     //godziny otwarcia
     private static final LocalTime minStartTime = LocalTime.of(7,0);
     private static final LocalTime maxEndTime = LocalTime.of(18,0);
 
-    public ScheduleService(ScheduleRepository scheduleRepository, OfficeRepository officeRepository, DoctorRepository doctorRepository) {
+    public ScheduleService(ScheduleRepository scheduleRepository, OfficeRepository officeRepository, DoctorRepository doctorRepository, VisitRepository visitRepository) {
         this.scheduleRepository = scheduleRepository;
         this.officeRepository = officeRepository;
         this.doctorRepository = doctorRepository;
+        this.visitRepository = visitRepository;
     }
 
     private boolean checkSchedulesCollisions(Schedule newSchedule, Set<Schedule> doctorSchedules,
@@ -198,8 +199,11 @@ public class ScheduleService {
     }
 
 
-    public void deleteScheduleById(int scheduleId) throws ScheduleNotFoundException {
+    public void deleteScheduleById(int scheduleId) throws ScheduleNotFoundException, VisitScheduledException {
         Schedule schedule = getScheduleById(scheduleId);
+        if(schedule.getVisits().stream().anyMatch(visit -> !visit.getDate().isBefore(LocalDate.now())))
+            throw new VisitScheduledException();
+        visitRepository.deleteAll(schedule.getVisits());
         scheduleRepository.delete(schedule);
     }
 
