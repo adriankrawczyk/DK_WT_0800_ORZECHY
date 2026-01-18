@@ -90,6 +90,9 @@ public class Visit {
 
     }
 
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
+    }
 
     @Override
     public String toString() {

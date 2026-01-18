@@ -3,6 +3,7 @@ package com.example.nfz.service;
 import com.example.nfz.model.Doctor;
 import com.example.nfz.model.Office;
 import com.example.nfz.model.Schedule;
+import com.example.nfz.model.Visit;
 import com.example.nfz.repository.DoctorRepository;
 import com.example.nfz.repository.OfficeRepository;
 import com.example.nfz.repository.ScheduleRepository;
@@ -167,6 +168,17 @@ public class ScheduleService {
         //Żeby dyżur trwał co najm godzinę
         Duration duration = Duration.between(newSchedule.getStartTime(), newSchedule.getEndTime());
         if(duration.toHours()<1) throw new ImpossibleScheduleException();
+
+        //przenieś wizyty
+        for(Schedule schedule : mergableSchedules) {
+
+            List<Visit> visits = List.copyOf(schedule.getVisits());
+            for(Visit visit: visits) {
+                schedule.getVisits().remove(visit);
+                visit.setSchedule(newSchedule);
+                newSchedule.getVisits().add(visit);
+            }
+        }
 
         //usun zbedne dyżury
         for(Schedule schedule : mergableSchedules) {
