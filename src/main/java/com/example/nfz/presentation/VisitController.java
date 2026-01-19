@@ -33,7 +33,7 @@ public class VisitController {
     @GetMapping
     @Operation(
             summary = "get all visits in the database",
-            description = ""
+            description = "returns time, doctor and patient details and id of schedule of every visit in the database"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok",
@@ -52,10 +52,10 @@ public class VisitController {
     @GetMapping("/{id}")
     @Operation(
             summary = "get a specific visit in the database",
-            description = ""
+            description = "returns time, doctor and patient details and id of schedule of a specific visit in the database"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "doctor not found"),
+            @ApiResponse(responseCode = "404", description = "visit not found"),
             @ApiResponse(responseCode = "200", description = "Ok",
                     content ={
                             @Content(mediaType = "application/json",
@@ -75,7 +75,7 @@ public class VisitController {
     @GetMapping("/avaliable")
     @Operation(
             summary = "get all available visit suggestions",
-            description = ""
+            description = "returns suggestions for visit times given doctor specialization and a time period"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "specialization not found"),
@@ -98,6 +98,23 @@ public class VisitController {
     }
 
     @PostMapping("/add")
+    @Operation(
+            summary = "adds a visit to the database",
+            description = "creates and adds a visit to the database, " +
+                    "returns created visit class object"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "patient or schedule not found"),
+            @ApiResponse(responseCode = "403", description = "visit collision"),
+            @ApiResponse(responseCode = "404", description = "invalid visit"),
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content ={
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = VisitDTO.class)
+                            )
+                    }
+            ),
+    })
     public VisitDTO addVisit(@RequestBody FormVisitDTO formVisitDTO) {
         try {
             VisitDTO visit = visitService.saveVisit(formVisitDTO);
@@ -112,6 +129,21 @@ public class VisitController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(
+            summary = "delete a specific visit in the database",
+            description = "deletes a specific visit in the database based on the provided id " +
+                    "on successful deletion, returns \"visit has been deleted\""
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "visit not found"),
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content ={
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = InfoApiResponse.class)
+                            )
+                    }
+            )
+    })
     public ResponseEntity<InfoApiResponse> deleteVisit(@PathVariable String id) {
         try{
             visitService.deleteVisitById(Integer.parseInt(id));
@@ -124,11 +156,39 @@ public class VisitController {
     }
 
     @GetMapping("/patient/{id}")
+    @Operation(
+            summary = "get all visits of a patient in the database",
+            description = "returns time, doctor and patient details and id of schedule of given patient's every visit in the database"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content ={
+                            @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = VisitDTO.class)
+                                    )
+                            )
+                    })
+    })
     public List<VisitDTO> getPatientVisits(@PathVariable String id) {
         return visitService.getPatientVisits(Integer.parseInt(id));
     }
 
     @GetMapping("/schedule/{id}")
+    @Operation(
+            summary = "get all visits of a schedule in the database",
+            description = "returns time, doctor and patient details and id of schedule of given schedule's every visit in the database"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content ={
+                            @Content(mediaType = "application/json",
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = VisitDTO.class)
+                                    )
+                            )
+                    })
+    })
     public List<VisitDTO> getScheduleVisits(@PathVariable String id) {
         return visitService.getScheduleVisits(Integer.parseInt(id));
     }

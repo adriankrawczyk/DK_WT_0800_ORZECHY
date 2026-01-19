@@ -87,7 +87,7 @@ public class VisitService {
 
     /**
      *
-     * @return
+     * @return a list of all visits in the database
      */
     public List<VisitDTO> getVisitsDTOs() {
         return getVisits().stream()
@@ -101,9 +101,9 @@ public class VisitService {
 
     /**
      *
-     * @param id
-     * @return
-     * @throws VisitNotFoundException
+     * @param id visit id
+     * @return {@link Visit} with a given id converted to {@link VisitDTO}
+     * @throws VisitNotFoundException if visit not found
      */
     public VisitDTO getVisitDTOById(int id) throws VisitNotFoundException {
         return new VisitDTO(getVisitById(id));
@@ -112,9 +112,9 @@ public class VisitService {
     /**
      *
      * @param spec specialization
-     * @param startDate
-     * @param endDate
-     * @return list of avaliable visit suggestion
+     * @param startDate start of the given period
+     * @param endDate   end of the given period
+     * @return list of avaliable visit suggestion {@link SuggestionVisitDTO}
      * @throws SpecializationNotFoundException if specialization not found
      */
     @Transactional
@@ -154,12 +154,12 @@ public class VisitService {
 
     /**
      *
-     * @param formVisitDTO
-     * @return
-     * @throws PatientNotFoundException
-     * @throws ScheduleNotFoundException
-     * @throws VisitCollisionException
-     * @throws InvalidvisitExcteption
+     * @param formVisitDTO visit form
+     * @return  {@link VisitDTO} of created visit
+     * @throws PatientNotFoundException if patient doesn't exist
+     * @throws ScheduleNotFoundException if Schedule doesn't exist
+     * @throws VisitCollisionException if visit collides with another one
+     * @throws InvalidvisitExcteption if proposed visit is somehow invalid
      */
     @Transactional
     public VisitDTO saveVisit(FormVisitDTO formVisitDTO) throws PatientNotFoundException, ScheduleNotFoundException, VisitCollisionException, InvalidvisitExcteption {
@@ -192,17 +192,32 @@ public class VisitService {
 
     }
 
+    /**
+     * deletes visit by given id
+     * @param id visit id
+     * @throws VisitNotFoundException if visit doesnt exist
+     */
     public void deleteVisitById(int id) throws VisitNotFoundException {
         Visit visit = visitRepository.findById(id).orElseThrow(VisitNotFoundException::new);
         visitRepository.delete(visit);
     }
 
+    /**
+     *
+     * @param id patient id
+     * @return  {@link VisitDTO} list of given patient visits
+     */
     public List<VisitDTO> getPatientVisits(int id) {
         return visitRepository.findAllByPatient_Id(id).stream()
                 .map(VisitDTO::new)
                 .toList();
     }
 
+    /**
+     *
+     * @param id schedule id
+     * @return {@link VisitDTO} list of given schedules visits
+     */
     public List<VisitDTO> getScheduleVisits(int id) {
         return visitRepository.findAllBySchedule_Id(id).stream()
                 .map(VisitDTO::new)

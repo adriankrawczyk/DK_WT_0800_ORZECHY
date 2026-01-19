@@ -90,6 +90,7 @@ public class ScheduleController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "schedule not found"),
+            @ApiResponse(responseCode = "403", description = "schedule has a scheduled future visit"),
             @ApiResponse(responseCode = "200", description = "Ok",
                     content ={
                             @Content(mediaType = "application/json",

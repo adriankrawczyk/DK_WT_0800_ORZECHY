@@ -82,6 +82,7 @@ public class PatientController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "patient not found"),
+            @ApiResponse(responseCode = "403", description = "patient has a scheduled future visit"),
             @ApiResponse(responseCode = "200", description = "Ok",
                     content ={
                             @Content(mediaType = "application/json",

@@ -211,6 +211,12 @@ public class ScheduleService {
     }
 
 
+    /**
+     * deletes a schedule by id
+     * @param scheduleId schedule id
+     * @throws ScheduleNotFoundException if schedule does not exist
+     * @throws VisitScheduledException if there is a future visit in this schedule
+     */
     public void deleteScheduleById(int scheduleId) throws ScheduleNotFoundException, VisitScheduledException {
         Schedule schedule = getScheduleById(scheduleId);
         if(schedule.getVisits().stream().anyMatch(visit -> !visit.getDate().isBefore(LocalDate.now())))
