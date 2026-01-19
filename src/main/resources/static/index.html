@@ -42,6 +42,23 @@
         margin-bottom: 5px;
       }
 
+      .nav-links {
+        margin-top: 10px;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        margin: 0 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
       .actions {
         display: flex;
         gap: 10px;
@@ -288,6 +305,13 @@
       <header>
         <h1>System Zarządzania Lekarzami NFZ</h1>
         <p>Aplikacja do zarządzania bazą danych lekarzy</p>
+        <div class="nav-links">
+          <a href="index.html">Lekarze</a>
+          <a href="offices.html">Gabinety</a>
+          <a href="schedules.html">Dyżury</a>
+          <a href="patients.html">Pacjenci</a>
+          <a href="visits.html">Wizyty</a>
+        </div>
       </header>
 
       <div id="alert" class="alert"></div>

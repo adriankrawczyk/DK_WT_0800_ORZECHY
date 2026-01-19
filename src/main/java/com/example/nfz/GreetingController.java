@@ -1,5 +1,9 @@
 package com.example.nfz;
 
+import com.example.nfz.model.Doctor;
+import com.example.nfz.model.Specialization;
+import com.example.nfz.repository.DoctorRepository;
+import com.example.nfz.service.DoctorService;
 import com.example.nfz.service.TestService;
 import com.example.nfz.util.InfoApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,6 +55,7 @@ public class GreetingController {
     })
     public ResponseEntity<InfoApiResponse> initDoctorDataBase() {
         testService.initDataBase();
+
         return ResponseEntity.ok(
                 new InfoApiResponse("database has been initialized"));
     }

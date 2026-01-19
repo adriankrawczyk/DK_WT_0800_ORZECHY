@@ -4,22 +4,27 @@ import com.example.nfz.model.Office;
 import com.example.nfz.model.Patient;
 import com.example.nfz.repository.OfficeRepository;
 import com.example.nfz.repository.PatientRepository;
+import com.example.nfz.repository.VisitRepository;
 import com.example.nfz.util.dto.DetailedPatientDTO;
 import com.example.nfz.util.dto.FormPatientDTO;
 import com.example.nfz.util.dto.PatientDTO;
 import com.example.nfz.util.exceptions.PatientNotFoundException;
+import com.example.nfz.util.exceptions.VisitScheduledException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class PatientService {
 
     private final PatientRepository patientRepository;
+    private final VisitRepository visitRepository;
 
-    public PatientService(PatientRepository patientRepository) {
+    public PatientService(PatientRepository patientRepository, VisitRepository visitRepository) {
         this.patientRepository = patientRepository;
+        this.visitRepository = visitRepository;
     }
 
     @PostConstruct
@@ -78,13 +83,18 @@ public class PatientService {
      *
      * @param id
      * @throws PatientNotFoundException if no patient exists with given id
+     * @throws VisitScheduledException if patient has a future visit scheduled
      */
-    public void  deletePatientById(int id) throws PatientNotFoundException {
+    public void  deletePatientById(int id) throws PatientNotFoundException, VisitScheduledException {
         Patient patient = getPatientById(id);
+        if(patient.getVisits().stream().anyMatch(visit -> !visit.getDate().isBefore(LocalDate.now())))
+            throw new VisitScheduledException();
+        visitRepository.deleteAll(patient.getVisits());
         patientRepository.delete(patient);
     }
 
     /**
+     *
      * Adds a new patient to the database
      *
      * @param patient form for adding a patient

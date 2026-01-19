@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,11 +26,18 @@ public class Schedule {
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
+    @OneToMany(mappedBy = "schedule")
+    private List<Visit> visits = new ArrayList<>();
+
     public Schedule(LocalTime startTime, LocalTime endTime, Office office, Doctor doctor) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.office = office;
         this.doctor = doctor;
+    }
+
+    public List<Visit> getVisits() {
+        return visits;
     }
 
     public LocalTime getStartTime() {

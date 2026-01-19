@@ -93,4 +93,16 @@ public class Doctor {
     public Address getAddress() {
         return address;
     }
+
+    @Override
+    public String toString() {
+        return "Doctor{" +
+                "address=" + address +
+                ", specialization=" + specialization +
+                ", PESEL='" + PESEL + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", id=" + id +
+                '}';
+    }
 }
