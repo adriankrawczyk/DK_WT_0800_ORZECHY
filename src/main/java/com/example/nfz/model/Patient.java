@@ -4,6 +4,8 @@ import com.example.nfz.util.Address;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Patient {
@@ -15,6 +17,9 @@ public class Patient {
     private String firstName;
     private String lastName;
     private String PESEL;
+
+    @OneToMany(mappedBy = "patient")
+    private List<Visit> visits = new ArrayList<>();
 
     @Embedded
     private Address address;
@@ -32,6 +37,10 @@ public class Patient {
 
 
     public Patient() {
+    }
+
+    public List<Visit> getVisits() {
+        return visits;
     }
 
     public int getId() {

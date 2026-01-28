@@ -5,10 +5,7 @@ import com.example.nfz.service.ScheduleService;
 import com.example.nfz.service.TestService;
 import com.example.nfz.util.*;
 import com.example.nfz.util.dto.*;
-import com.example.nfz.util.exceptions.DoctorNotFoundException;
-import com.example.nfz.util.exceptions.ImpossibleScheduleException;
-import com.example.nfz.util.exceptions.OfficeNotFoundException;
-import com.example.nfz.util.exceptions.ScheduleNotFoundException;
+import com.example.nfz.util.exceptions.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -93,6 +90,7 @@ public class ScheduleController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "schedule not found"),
+            @ApiResponse(responseCode = "403", description = "schedule has a scheduled future visit"),
             @ApiResponse(responseCode = "200", description = "Ok",
                     content ={
                             @Content(mediaType = "application/json",
@@ -109,6 +107,8 @@ public class ScheduleController {
             );
         }catch(ScheduleNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "schedule not found");
+        } catch (VisitScheduledException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "scheduled visits exist");
         }
     }
 

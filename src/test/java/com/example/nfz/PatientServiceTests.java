@@ -7,6 +7,7 @@ import com.example.nfz.util.dto.DetailedPatientDTO;
 import com.example.nfz.util.dto.FormPatientDTO;
 import com.example.nfz.util.dto.PatientDTO;
 import com.example.nfz.util.exceptions.PatientNotFoundException;
+import com.example.nfz.util.exceptions.VisitScheduledException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -112,7 +113,7 @@ public class PatientServiceTests {
     }
 
     @Test
-    public void deletePatientTest() throws PatientNotFoundException {
+    public void deletePatientTest() throws PatientNotFoundException, VisitScheduledException {
         // usuniecie pacjenta z bazy
         when(patientRepository.findById(1)).thenReturn(Optional.of(testPatient));
 

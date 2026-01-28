@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wizyty - System NFZ</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        height: 100%;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f5f5;
+        padding: 20px;
+        min-height: 100%;
+      }
+
+      .container {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+      }
+
+      header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2em;
+        margin-bottom: 5px;
+      }
+
+      .nav-links {
+        margin-top: 10px;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        margin: 0 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 12px 24px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .btn-primary {
+        background: #667eea;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #5a6fd6;
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c82333;
+      }
+
+      .btn-success {
+        background: #28a745;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #218838;
+      }
+
+      .btn-info {
+        background: #17a2b8;
+        color: white;
+      }
+
+      .btn-info:hover {
+        background: #138496;
+      }
+
+      .btn-warning {
+        background: #ffc107;
+        color: #212529;
+      }
+
+      .btn-warning:hover {
+        background: #e0a800;
+      }
+
+      .card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .card h2 {
+        color: #333;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #667eea;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background: #667eea;
+        color: white;
+      }
+
+      tr:hover {
+        background-color: #f8f9fa;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        overflow-y: scroll;
+      }
+
+      body.modal-open {
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .modal-content {
+        background-color: white;
+        margin: 20px auto;
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 800px;
+        position: relative;
+        margin-bottom: 50px;
+      }
+
+      .modal-content.large {
+        max-width: 1000px;
+      }
+
+      .modal-content h2 {
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      .close {
+        position: absolute;
+        right: 20px;
+        top: 15px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #aaa;
+      }
+
+      .close:hover {
+        color: #333;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 15px;
+      }
+
+      .form-row .form-group {
+        flex: 1;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .alert {
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        display: none;
+      }
+
+      .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .alert-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #666;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 5px;
+      }
+
+      .action-buttons button {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .search-form {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+      }
+
+      .search-form .form-group {
+        margin-bottom: 0;
+        min-width: 150px;
+      }
+
+      .available-slots {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .slot-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        background: #f8f9fa;
+      }
+
+      .slot-item:hover {
+        background: #e9ecef;
+      }
+
+      .slot-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .slot-date {
+        font-weight: bold;
+        color: #333;
+      }
+
+      .slot-time {
+        color: #667eea;
+        font-size: 1.1em;
+      }
+
+      .slot-doctor {
+        color: #666;
+        font-size: 0.9em;
+      }
+
+      .patient-info {
+        background: #e7f3ff;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .patient-info h3 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      .visit-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .badge-future {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .badge-past {
+        background: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Zarządzanie Wizytami</h1>
+        <p>System NFZ - Umawianie i odwoływanie wizyt</p>
+        <div class="nav-links">
+          <a href="index.html">Lekarze</a>
+          <a href="offices.html">Gabinety</a>
+          <a href="schedules.html">Dyżury</a>
+          <a href="patients.html">Pacjenci</a>
+          <a href="visits.html">Wizyty</a>
+        </div>
+      </header>
+
+      <div id="alert" class="alert"></div>
+
+      <div class="actions">
+        <button class="btn-primary" onclick="openBookingModal()">
+          Umów Nową Wizytę
+        </button>
+        <button class="btn-secondary" onclick="loadVisits()">
+          Odśwież Listę
+        </button>
+      </div>
+
+      <div class="card">
+        <h2>Lista Wizyt</h2>
+        <div id="visitsList">
+          <div class="empty-state">Ładowanie danych...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Umawiania Wizyty - Krok 1: Wybór pacjenta i specjalizacji -->
+    <div id="bookingModal" class="modal">
+      <div class="modal-content large">
+        <span class="close" onclick="closeBookingModal()">&times;</span>
+        <h2>Umów Wizytę</h2>
+        
+        <div id="step1" class="booking-step">
+          <h3>Krok 1: Wybierz pacjenta i specjalizację</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="patientSelect">Pacjent:</label>
+              <select id="patientSelect" required>
+                <option value="">-- Wybierz pacjenta --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="specializationSelect">Specjalizacja:</label>
+              <select id="specializationSelect" required>
+                <option value="">-- Wybierz specjalizację --</option>
+                <option value="Kardiologia">Kardiologia</option>
+                <option value="Neurologia">Neurologia</option>
+                <option value="Onkologia">Onkologia</option>
+                <option value="Urologia">Urologia</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="startDate">Data od:</label>
+              <input type="date" id="startDate" required />
+            </div>
+            <div class="form-group">
+              <label for="endDate">Data do:</label>
+              <input type="date" id="endDate" required />
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button class="btn-primary" onclick="searchAvailableSlots()">Szukaj dostępnych terminów</button>
+            <button class="btn-secondary" onclick="closeBookingModal()">Anuluj</button>
+          </div>
+        </div>
+
+        <div id="step2" class="booking-step" style="display: none;">
+          <h3>Krok 2: Wybierz termin</h3>
+          
+          <div class="patient-info" id="selectedPatientInfo"></div>
+          
+          <div id="availableSlots" class="available-slots">
+            <div class="empty-state">Wyszukaj dostępne terminy...</div>
+          </div>
+          
+          <div class="form-actions">
+            <button class="btn-secondary" onclick="goBackToStep1()">Wróć</button>
+            <button class="btn-secondary" onclick="closeBookingModal()">Anuluj</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Potwierdzenia Usunięcia -->
+    <div id="deleteModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeDeleteModal()">&times;</span>
+        <h2>Odwołanie Wizyty</h2>
+        <p id="deleteMessage" style="margin: 20px 0">
+          Czy na pewno chcesz odwołać tę wizytę?
+        </p>
+        <div class="form-actions">
+          <button class="btn-danger" id="confirmDeleteBtn">Odwołaj wizytę</button>
+          <button class="btn-secondary" onclick="closeDeleteModal()">
+            Anuluj
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_URL = "http://localhost:8080";
+      let selectedPatientId = null;
+      let availableSlotsData = [];
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadVisits();
+        loadPatients();
+        setDefaultDates();
+        
+        // Check if we came from patients page with a patient ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const patientIdFromUrl = urlParams.get('patientId');
+        if (patientIdFromUrl) {
+          selectedPatientId = parseInt(patientIdFromUrl);
+          setTimeout(() => {
+            document.getElementById('patientSelect').value = selectedPatientId;
+            openBookingModal();
+          }, 500);
+        }
+      });
+
+      function setDefaultDates() {
+        const today = new Date();
+        const nextWeek = new Date(today);
+        nextWeek.setDate(nextWeek.getDate() + 7);
+        
+        document.getElementById('startDate').value = formatDateForInput(today);
+        document.getElementById('endDate').value = formatDateForInput(nextWeek);
+      }
+
+      function formatDateForInput(date) {
+        return date.toISOString().split('T')[0];
+      }
+
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pl-PL', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+      }
+
+      function showAlert(message, type) {
+        const alert = document.getElementById("alert");
+        alert.textContent = message;
+        alert.className = `alert alert-${type}`;
+        alert.style.display = "block";
+        setTimeout(() => {
+          alert.style.display = "none";
+        }, 3000);
+      }
+
+      async function loadVisits() {
+        try {
+          const response = await fetch(`${API_URL}/visits`);
+          if (!response.ok) throw new Error("Błąd pobierania danych");
+
+          const visits = await response.json();
+          displayVisits(visits);
+        } catch (error) {
+          document.getElementById("visitsList").innerHTML =
+            '<div class="empty-state">Błąd połączenia z serwerem. Upewnij się, że backend jest uruchomiony.</div>';
+        }
+      }
+
+      function displayVisits(visits) {
+        const container = document.getElementById("visitsList");
+
+        if (visits.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state">Brak wizyt w bazie danych. Kliknij "Umów Nową Wizytę" aby umówić pierwszą wizytę.</div>';
+          return;
+        }
+
+        // Sort by date
+        visits.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Data</th>
+                            <th>Godzina</th>
+                            <th>Pacjent</th>
+                            <th>Lekarz</th>
+                            <th>Specjalizacja</th>
+                            <th>Status</th>
+                            <th>Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        visits.forEach((visit) => {
+          const visitDate = new Date(visit.date);
+          const isPast = visitDate < today;
+          const statusBadge = isPast 
+            ? '<span class="visit-badge badge-past">Zakończona</span>'
+            : '<span class="visit-badge badge-future">Zaplanowana</span>';
+
+          html += `
+                    <tr>
+                        <td>${visit.id}</td>
+                        <td>${formatDate(visit.date)}</td>
+                        <td>${visit.time}</td>
+                        <td>${visit.patient.firstName} ${visit.patient.lastName}</td>
+                        <td>dr ${visit.doctor.firstName} ${visit.doctor.lastName}</td>
+                        <td>${visit.doctor.specialization}</td>
+                        <td>${statusBadge}</td>
+                        <td class="action-buttons">
+                            <button class="btn-danger" onclick="confirmCancelVisit(${visit.id}, '${visit.date}', '${visit.time}')">Odwołaj</button>
+                        </td>
+                    </tr>
+                `;
+        });
+
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      }
+
+      async function loadPatients() {
+        try {
+          const response = await fetch(`${API_URL}/patients`);
+          if (!response.ok) throw new Error("Błąd pobierania pacjentów");
+
+          const patients = await response.json();
+          const select = document.getElementById("patientSelect");
+          
+          patients.forEach((patient) => {
+            const option = document.createElement("option");
+            option.value = patient.id;
+            option.textContent = `${patient.firstName} ${patient.lastName}`;
+            select.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Błąd ładowania pacjentów:", error);
+        }
+      }
+
+      function openBookingModal() {
+        document.getElementById("step1").style.display = "block";
+        document.getElementById("step2").style.display = "none";
+        document.getElementById("bookingModal").style.display = "block";
+        document.body.classList.add("modal-open");
+        
+        if (selectedPatientId) {
+          document.getElementById('patientSelect').value = selectedPatientId;
+        }
+      }
+
+      function closeBookingModal() {
+        document.getElementById("bookingModal").style.display = "none";
+        document.body.classList.remove("modal-open");
+        selectedPatientId = null;
+        // Reset URL params
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      function goBackToStep1() {
+        document.getElementById("step1").style.display = "block";
+        document.getElementById("step2").style.display = "none";
+      }
+
+      async function searchAvailableSlots() {
+        const patientId = document.getElementById("patientSelect").value;
+        const specialization = document.getElementById("specializationSelect").value;
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+
+        if (!patientId || !specialization || !startDate || !endDate) {
+          showAlert("Wypełnij wszystkie pola!", "error");
+          return;
+        }
+
+        selectedPatientId = parseInt(patientId);
+        
+        // Get patient info
+        const patientSelect = document.getElementById("patientSelect");
+        const patientName = patientSelect.options[patientSelect.selectedIndex].text;
+        
+        document.getElementById("selectedPatientInfo").innerHTML = `
+          <h3>Pacjent: ${patientName}</h3>
+          <p>Specjalizacja: ${specialization} | Okres: ${formatDate(startDate)} - ${formatDate(endDate)}</p>
+        `;
+
+        try {
+          const response = await fetch(
+            `${API_URL}/visits/avaliable?startDate=${startDate}&endDate=${endDate}&specialization=${specialization}`
+          );
+          
+          if (response.status === 404) {
+            document.getElementById("availableSlots").innerHTML = 
+              '<div class="empty-state">Nie znaleziono specjalizacji.</div>';
+            document.getElementById("step1").style.display = "none";
+            document.getElementById("step2").style.display = "block";
+            return;
+          }
+          
+          if (!response.ok) throw new Error("Błąd wyszukiwania terminów");
+
+          availableSlotsData = await response.json();
+          displayAvailableSlots(availableSlotsData);
+          
+          document.getElementById("step1").style.display = "none";
+          document.getElementById("step2").style.display = "block";
+        } catch (error) {
+          showAlert("Błąd podczas wyszukiwania dostępnych terminów", "error");
+        }
+      }
+
+      function displayAvailableSlots(slots) {
+        const container = document.getElementById("availableSlots");
+
+        if (slots.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state">Brak dostępnych terminów w wybranym okresie. Spróbuj wybrać inny zakres dat.</div>';
+          return;
+        }
+
+        // Group by date
+        const groupedSlots = {};
+        slots.forEach(slot => {
+          if (!groupedSlots[slot.date]) {
+            groupedSlots[slot.date] = [];
+          }
+          groupedSlots[slot.date].push(slot);
+        });
+
+        let html = '';
+        
+        Object.keys(groupedSlots).sort().forEach(date => {
+          html += `<h4 style="margin: 15px 0 10px; color: #333;">${formatDate(date)}</h4>`;
+          
+          groupedSlots[date].forEach(slot => {
+            const endTime = calculateEndTime(slot.time);
+            html += `
+              <div class="slot-item">
+                <div class="slot-info">
+                  <span class="slot-time">${slot.time} - ${endTime}</span>
+                  <span class="slot-doctor">dr ${slot.doctor.firstName} ${slot.doctor.lastName} (${slot.doctor.specialization})</span>
+                </div>
+                <button class="btn-success" onclick="bookVisit('${slot.date}', '${slot.time}', ${slot.scheduleId})">
+                  Umów
+                </button>
+              </div>
+            `;
+          });
+        });
+
+        container.innerHTML = html;
+      }
+
+      function calculateEndTime(startTime) {
+        const [hours, minutes] = startTime.split(':').map(Number);
+        let endMinutes = minutes + 15;
+        let endHours = hours;
+        
+        if (endMinutes >= 60) {
+          endMinutes -= 60;
+          endHours += 1;
+        }
+        
+        return `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
+      }
+
+      async function bookVisit(date, time, scheduleId) {
+        if (!selectedPatientId) {
+          showAlert("Wybierz pacjenta!", "error");
+          return;
+        }
+
+        const visitData = {
+          scheduleId: scheduleId,
+          time: time,
+          date: date,
+          patientId: selectedPatientId
+        };
+
+        try {
+          const response = await fetch(`${API_URL}/visits/add`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(visitData),
+          });
+
+          if (response.status === 403) {
+            showAlert("Konflikt terminów - ten termin jest już zajęty!", "error");
+            return;
+          }
+
+          if (response.status === 400) {
+            showAlert("Nieprawidłowe dane wizyty!", "error");
+            return;
+          }
+
+          if (!response.ok) throw new Error("Błąd umawiania wizyty");
+
+          closeBookingModal();
+          showAlert("Wizyta została pomyślnie umówiona!", "success");
+          loadVisits();
+        } catch (error) {
+          showAlert("Błąd podczas umawiania wizyty", "error");
+        }
+      }
+
+      function confirmCancelVisit(id, date, time) {
+        document.getElementById("deleteMessage").textContent = 
+          `Czy na pewno chcesz odwołać wizytę z dnia ${formatDate(date)} o godzinie ${time}?`;
+        document.getElementById("confirmDeleteBtn").onclick = () => cancelVisit(id);
+        document.getElementById("deleteModal").style.display = "block";
+        document.body.classList.add("modal-open");
+      }
+
+      function closeDeleteModal() {
+        document.getElementById("deleteModal").style.display = "none";
+        document.body.classList.remove("modal-open");
+      }
+
+      async function cancelVisit(id) {
+        try {
+          const response = await fetch(`${API_URL}/visits/${id}`, {
+            method: "DELETE",
+          });
+
+          if (!response.ok) throw new Error("Błąd odwoływania wizyty");
+
+          closeDeleteModal();
+          showAlert("Wizyta została pomyślnie odwołana!", "success");
+          loadVisits();
+        } catch (error) {
+          showAlert("Błąd podczas odwoływania wizyty", "error");
+        }
+      }
+
+      window.onclick = function (event) {
+        if (event.target.classList.contains("modal")) {
+          event.target.style.display = "none";
+          document.body.classList.remove("modal-open");
+        }
+      };
+    </script>
+  </body>
+</html>

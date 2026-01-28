@@ -6,6 +6,7 @@ import com.example.nfz.service.PatientService;
 import com.example.nfz.util.InfoApiResponse;
 import com.example.nfz.util.dto.*;
 import com.example.nfz.util.exceptions.PatientNotFoundException;
+import com.example.nfz.util.exceptions.VisitScheduledException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -81,6 +82,7 @@ public class PatientController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "patient not found"),
+            @ApiResponse(responseCode = "403", description = "patient has a scheduled future visit"),
             @ApiResponse(responseCode = "200", description = "Ok",
                     content ={
                             @Content(mediaType = "application/json",
@@ -97,6 +99,8 @@ public class PatientController {
             );
         } catch (PatientNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "patient not found");
+        } catch (VisitScheduledException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "patient has a scheduled visit");
         }
     }
 
